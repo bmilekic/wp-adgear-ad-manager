@@ -45,11 +45,10 @@ function adgear_create_menu() {
   add_action( 'admin_init', 'adgear_register_settings' );
 }
 
-
 function adgear_register_settings() {
-  register_setting( 'adgear-settings-group', 'api_username' );
-  register_setting( 'adgear-settings-group', 'api_key' );
-  register_setting( 'adgear-settings-group', 'api_root_url' );
+  register_setting( 'adgear-settings-group', 'adgear_api_username' );
+  register_setting( 'adgear-settings-group', 'adgear_api_key' );
+  register_setting( 'adgear-settings-group', 'adgear_api_root_url' );
 }
 
 function adgear_settings_page() {
@@ -58,28 +57,24 @@ function adgear_settings_page() {
 <h2>AdGear Settings</h2>
 
 <form method="post" action="options.php">
-    <?php settings_fields( 'adgear-settings-group' ); ?>
-    <table class="form-table">
-        <tr valign="top">
-        <th scope="row">API Username</th>
-        <td><input type="text" name="api_username" value="<?php echo get_option('api_username', ''); ?>" /></td>
-        </tr>
-         
-        <tr valign="top">
-        <th scope="row">API Digest Key</th>
-        <td><input type="text" name="api_key" size="68" value="<?php echo get_option('api_key', ''); ?>" /></td>
-        </tr>
-        
-        <tr valign="top">
-        <th scope="row">API Root URL</th>
-        <td><input type="text" name="api_root_url" size="40" value="<?php echo get_option('api_root_url', 'http://api.adming.adgear.com/'); ?>" /></td>
-        </tr>
-    </table>
-    
-    <p class="submit">
+  <?php settings_fields( 'adgear-settings-group' ); ?>
+  <table class="form-table">
+    <tr valign="top">
+      <th scope="row">API Username</th>
+      <td><input type="text" name="adgear_api_username" value="<?php echo get_option('adgear_api_username', ''); ?>" /></td>
+    </tr>
+    <tr valign="top">
+      <th scope="row">API Digest Key</th>
+      <td><input type="text" name="adgear_api_key" size="68" value="<?php echo get_option('adgear_api_key', ''); ?>" /></td>
+    </tr>
+    <tr valign="top">
+      <th scope="row">API Root URL</th>
+      <td><input type="text" name="adgear_api_root_url" size="40" value="<?php echo get_option('adgear_api_root_url', 'http://api.admin.adgear.com/'); ?>" /></td>
+    </tr>
+  </table>
+  <p class="submit">
     <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
-    </p>
-
+  </p>
 </form>
 </div>
 <?php } ?>
