@@ -42,16 +42,17 @@ function adgear_init() {
   }
 }
 
-/* gets the data from a URL */
+/* Returns JSON decoded data from a call to the AdGear API.
+ * If the configuration options are still blank, returns an empty array.
+ */
 function adgear_get_service_data( $service_name ) {
-  echo "init\n";
   $ch = curl_init();
-  echo "channel: $ch\n";
 
   $username = get_option('adgear_api_username');
+  if ($username == FALSE) return array();
+
   $password = get_option('adgear_api_key');
   $root_url = get_option('adgear_api_root_url');
-  echo "u: $username, p: $password, u: $root_url\n";
 
   $timeout = 5;
   curl_setopt($ch, CURLOPT_URL, $root_url.".json");
@@ -60,33 +61,20 @@ function adgear_get_service_data( $service_name ) {
   curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
   curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
 
-  echo "exec\n";
   $service_data = json_decode(curl_exec($ch), TRUE);
-  var_dump($service_data);
 
-  $list_formats = "";
-  $list_sites   = "";
-  foreach($service_data["_urls"] as $service) {
-    if ($service["name"] == "list_formats") {
-      $list_formats = $service["url"];
-    } else if ($service["name"] == "list_sites") {
-      $list_sites = $service["url"];
+  $service_url = "";
+  foreach( $service_data["_urls"] as $service ) {
+    if ( $service["name"] == $service_name ) {
+      $service_url = $service["url"];
     }
   }
 
-  print "list_formats: $list_formats\n";
-  curl_setopt($ch, CURLOPT_URL, $list_formats);
-  $formats_data = json_decode(curl_exec($ch), TRUE);
-
-  print "list_sites: $list_sites\n";
-  curl_setopt($ch, CURLOPT_URL, $list_sites);
-  $sites_data = json_decode(curl_exec($ch), TRUE);
-
-  var_dump(formats_data);
-  var_dump(sites_data);
+  curl_setopt($ch, CURLOPT_URL, $service_url);
+  $data = json_decode(curl_exec($ch), TRUE);
 
   curl_close($ch);
-  return $service_data;
+  return $data;
 }
 
 function adgear_create_menu() {
@@ -98,6 +86,8 @@ function adgear_register_settings() {
   register_setting( 'adgear-settings-group', 'adgear_api_username' );
   register_setting( 'adgear-settings-group', 'adgear_api_key' );
   register_setting( 'adgear-settings-group', 'adgear_api_root_url' );
+  register_setting( 'adgear-settings-group', 'adgear_site_id' );
+  register_setting( 'adgear-settings-group', 'adgear_site_embed_code' );
 }
 
 function adgear_settings_page() {
@@ -120,11 +110,31 @@ function adgear_settings_page() {
       <th scope="row">API Root URL</th>
       <td><input type="text" name="adgear_api_root_url" size="40" value="<?php echo get_option('adgear_api_root_url', 'http://api.admin.adgear.com/'); ?>" /></td>
     </tr>
-    <tr>
-      <td colspan="2">
-<pre><code><?php
-echo adgear_get_service_data("");
-?></code></pre>
+    <tr valign="top">
+      <th scope="row">AdGear Site</th>
+      <td>
+<?php
+  if ( get_option('adgear_api_username') && get_option('adgear_api_key') && get_option('adgear_api_root_url') ) {
+    /* API username set, so we presume we can talk to AdGear */
+    $sites = adgear_get_service_data( 'list_sites' );
+?>
+        <select name="adgear_site_id">
+<?php
+    foreach($sites["sites"] as $site) {
+?>
+          <option value="<?php echo $site["id"]; ?>"<?php if ( $site["id"] == get_option('adgear_site_id') ) { echo ' selected="selected"'; } ?>><?php echo $site["name"]; ?></option>
+<?php
+    }
+?>
+        </select>
+<?php
+  } else {
+    /* Configuration not set yet */
+?>
+        <p><?php $_('Set your AdGear credentials above, then save the settings to see which sites are already configured.') ?></p>
+<?php
+  }
+?>
       </td>
     </tr>
   </table>
