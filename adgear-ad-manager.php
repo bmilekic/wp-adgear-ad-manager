@@ -37,7 +37,56 @@ function adgear_init() {
 
   if ( is_admin() ) {
     add_action('admin_menu', 'adgear_create_menu');
+  } else {
+
   }
+}
+
+/* gets the data from a URL */
+function adgear_get_service_data( $service_name ) {
+  echo "init\n";
+  $ch = curl_init();
+  echo "channel: $ch\n";
+
+  $username = get_option('adgear_api_username');
+  $password = get_option('adgear_api_key');
+  $root_url = get_option('adgear_api_root_url');
+  echo "u: $username, p: $password, u: $root_url\n";
+
+  $timeout = 5;
+  curl_setopt($ch, CURLOPT_URL, $root_url.".json");
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+  curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+  curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
+
+  echo "exec\n";
+  $service_data = json_decode(curl_exec($ch), TRUE);
+  var_dump($service_data);
+
+  $list_formats = "";
+  $list_sites   = "";
+  foreach($service_data["_urls"] as $service) {
+    if ($service["name"] == "list_formats") {
+      $list_formats = $service["url"];
+    } else if ($service["name"] == "list_sites") {
+      $list_sites = $service["url"];
+    }
+  }
+
+  print "list_formats: $list_formats\n";
+  curl_setopt($ch, CURLOPT_URL, $list_formats);
+  $formats_data = json_decode(curl_exec($ch), TRUE);
+
+  print "list_sites: $list_sites\n";
+  curl_setopt($ch, CURLOPT_URL, $list_sites);
+  $sites_data = json_decode(curl_exec($ch), TRUE);
+
+  var_dump(formats_data);
+  var_dump(sites_data);
+
+  curl_close($ch);
+  return $service_data;
 }
 
 function adgear_create_menu() {
@@ -70,6 +119,13 @@ function adgear_settings_page() {
     <tr valign="top">
       <th scope="row">API Root URL</th>
       <td><input type="text" name="adgear_api_root_url" size="40" value="<?php echo get_option('adgear_api_root_url', 'http://api.admin.adgear.com/'); ?>" /></td>
+    </tr>
+    <tr>
+      <td colspan="2">
+<pre><code><?php
+echo adgear_get_service_data("");
+?></code></pre>
+      </td>
     </tr>
   </table>
   <p class="submit">
