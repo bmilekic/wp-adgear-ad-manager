@@ -37,8 +37,28 @@ function adgear_init() {
 
   if ( is_admin() ) {
     add_action('admin_menu', 'adgear_create_menu');
+    add_action('update_option_adgear_site_id', 'adgear_update_site_embed_code', 10, 2);
   } else {
+    add_action('wp_head', 'adgear_output_site_embed_tag');
+  }
+}
 
+function adgear_output_site_embed_tag() {
+  $embed_code = get_option('adgear_site_embed_code');
+  if ( !$embed_code ) return;
+
+  echo $embed_code;
+}
+
+function adgear_update_site_embed_code($old_value, $new_value) {
+  if ( $old_value == $new_value ) return;
+
+  $sites = adgear_get_service_data( 'list_sites' );
+  foreach( $sites["sites"] as $site ) {
+    if ( $site["id"] == $new_value ) {
+      update_option( 'adgear_site_embed_code', $site['embed_code'] );
+      break;
+    }
   }
 }
 
@@ -131,7 +151,7 @@ function adgear_settings_page() {
   } else {
     /* Configuration not set yet */
 ?>
-        <p><?php $_('Set your AdGear credentials above, then save the settings to see which sites are already configured.') ?></p>
+        <p><?php _e('Set your AdGear credentials above, then save the settings to see which sites are already configured.') ?></p>
 <?php
   }
 ?>
