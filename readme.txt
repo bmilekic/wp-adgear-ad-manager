@@ -1,4 +1,4 @@
-=== Plugin Name ===
+=== AdGear Ad Manager ===
 Tags: ad, ads
 Requires at least: 2.9.2
 Tested up to: 2.9.2
@@ -8,40 +8,49 @@ Serve ads from your AdGear account automatically.
 
 == Description ==
 
-This is the long description.  No limit, and you can use Markdown (as well as in the following sections).
-
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-Markdown parsed.
-
-A few notes about the sections above:
-
-*   "Contributors" is a comma separated list of wp.org/wp-plugins.org usernames
-*   "Tags" is a comma separated list of tags that apply to the plugin
-*   "Requires at least" is the lowest version that the plugin will work on
-*   "Tested up to" is the highest version that you've *successfully used to test the plugin*. Note that it might work on
-higher versions... this is just the highest one you've verified.
-*   Stable tag should indicate the Subversion "tag" of the latest stable version, or "trunk," if you use `/trunk/` for
-stable.
-
-    Note that the `readme.txt` of the stable tag is the one that is considered the defining one for the plugin, so
-if the `/trunk/readme.txt` file says that the stable tag is `4.3`, then it is `/tags/4.3/readme.txt` that'll be used
-for displaying information about the plugin.  In this situation, the only thing considered from the trunk `readme.txt`
-is the stable tag pointer.  Thus, if you develop in trunk, you can update the trunk `readme.txt` to reflect changes in
-your in-development version, without having that information incorrectly disclosed about the current stable version
-that lacks those changes -- as long as the trunk's `readme.txt` points to the correct stable tag.
-
-    If no stable tag is provided, it is assumed that trunk is stable, but you should specify "trunk" if that's where
-you put the stable version, in order to eliminate any doubt.
+AdGear Ad Manager allows you to serve your ads without leaving your WordPress installation.
 
 == Installation ==
 
-This section describes how to install the plugin and get it working.
-
-e.g.
-
-1. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
+1. Upload `adgear-ad-manager.php` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Place `<?php do_action('plugin_name_hook'); ?>` in your templates
+1. Login to your AdGear account, click on your username to edit your settings, enable API access, and copy your API key
+1. In AdGear, create a website for your WordPress blog
+1. Back in WordPress, go to Settings, AdGear Settings, then set your username, paste your API key, and set the root API endpoint (should be http://api.admin.adgear.com/, which is filled in by default)
+1. Save the settings, then choose your site from the dropdown
+
+=== Adding an Ad in the sidebar ===
+
+You have two choices: you can use Shortcodes or straight PHP from your template. If you use Shortcodes, you have to enable them for all plugins, globally. There is a slight security risk associated with this: if a malicious plugin used a Shortcode without your knowledge in a sidebar, the Shortcode would be interpreted, and might do something.
+
+=== Using the Shortcode tag ===
+
+Anywhere in the body of your post or in widgets (if Shortcodes are enabled in sidebars), you may use the AdGear Shortcode:
+
+    [adgear_ad name=in-article]
+    [adgear_ad id=123]
+
+These two Shortcodes will generate so-called Static AdSpot Tags. If your ad spot's name includes a space, you will need to enclose the name in double quotes:
+
+    [adgear_ad name="Front Page"]
+
+Sometimes you want to show one set of AdSpots on single post pages vs list pages. You can do so with the `single` option:
+
+    [adgear_ad name="List Sidebar" single=no]
+    [adgear_ad name="Sidebar for Article" single=yes]
+
+The List Sidebar AdSpot would be generated only on list pages: archives, front page, etc. The Sidebar for Article AdSpot would be generated if the visitor is viewing a single post's page.
+
+=== Using the Shortcode tag with Dynamic AdSpots ===
+
+Dynamic AdSpots are used when you want AdGear to learn about your site's hierarchy automatically. Please refer to [Creating a Website With Dynamically Managed Ad Spots](http://adgear.com/support/quick-start/configuring-a-complex-website#Creating_a_Website_With_Dynamically_Managed_Ad_Spots) on the AdGear support site for details.
+
+The Shortcode API is very similar to the Static AdSpot tags:
+
+    [adgear_ad format=banner single=yes path=by_categories]
+    [adgear_ad format=skyscraper single=yes path=by_tags]
+    [adgear_ad format=leaderboard single=no]
+    [adgear_ad format=half-button single=no]
 
 == Frequently Asked Questions ==
 
