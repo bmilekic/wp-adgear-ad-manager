@@ -40,6 +40,10 @@ function adgear_init() {
     add_action('update_option_adgear_site_id', 'adgear_update_site_embed_code', 10, 2);
   } else {
     add_action('wp_head', 'adgear_output_site_embed_tag');
+
+    if ( get_option( 'adgear_enable_shortcode_in_sidebar' ) ) {
+      add_filter('widget_text', 'do_shortcode');
+    }
   }
 }
 
@@ -51,10 +55,65 @@ function adgear_output_site_embed_tag() {
   echo $embed_code;
 }
 
+function adgear_ad() {
+  $embed_code = "";
+  if ( get_option( 'adgear_site_is_dynamic' ) ) {
+    $format = func_get_arg(0);
+    $path   = func_get_arg(1);
+
+    // Switch on $format
+    $embed_code = get_option( 'adgear_site_universal_embed_code' );
+    $embed_code = str_replace( "__CHIP_KEY__", get_option( 'adgear_site_chip_key' ), $embed_code );
+    $embed_code = str_replace( "__FORMAT_ID__", $format, $embed_code );
+    if ( $path ) {
+      $embed_code = preg_replace( '/"path"\s*:\s*\[.*\]/', '"path":'.json_encode( $path ), $embed_code );
+    } else {
+      // We might be called with only a single arg, and func_get_arg() returns FALSE in that case
+      $embed_code = preg_replace( '/"path"\s*:\s*\[.*\]/', '"path":'.json_encode( array() ), $embed_code );
+    }
+  } else {
+    $csv = get_option( 'adgear_ad_spots_csv' );
+    if ( $csv ) {
+      $match = func_get_arg(0);
+      foreach( explode( "\n", $csv ) as $line ) {
+        $row = explode( ",", $line );
+        if ( $row[0] == $match || ( array_length( $row ) == 3 && $row[1] == $match ) ) {
+          $key = 'adgear_adspot_embed_code_'. $row[0];
+          $embed_code = get_option( $key );
+          break;
+        }
+      }
+    }
+  }
+
+  return $embed_code;
+}
+
+function adgear_ad_handler($atts) {
+  extract(shortcode_atts(array(
+    "id"     => "",
+    "name"   => "",
+    "format" => "",
+    "path"   => "",
+  ), $atts));
+
+  if ( $id ) {
+    return adgear_ad( $id );
+  } else if ( $name ) {
+    return adgear_ad( $name );
+  } else if ( $format ) {
+    return adgear_ad( $format, array() );
+  } else if ( $format && $path ) {
+    return adgear_ad( $format, explode( ',', $path ) );
+  } else {
+    return "<!-- adgear_serve_ad_tag could not understand atts -->";
+  }
+}
+add_shortcode('adgear_ad', 'adgear_ad_handler');
+
 function adgear_cleanup_obsolete_ad_spot_data() {
   $csv = get_option( 'adgear_ad_spots_csv' );
   if ( $csv ) {
-    $log .= "adgear_ad_spots_csv contained:\n---\n$csv\n---\n\n";
     foreach( explode( "\n", $csv ) as $line ) {
       $row = explode( ",", $line );
       $key = 'adgear_adspot_embed_code_'. $row[0];
@@ -174,6 +233,7 @@ function adgear_register_settings() {
   register_setting( 'adgear-settings-group', 'adgear_api_key' );
   register_setting( 'adgear-settings-group', 'adgear_api_root_url' );
   register_setting( 'adgear-settings-group', 'adgear_site_id' );
+  register_setting( 'adgear-settings-group', 'adgear_enable_shortcode_in_sidebar' );
 }
 
 function adgear_settings_page() {
@@ -195,6 +255,16 @@ function adgear_settings_page() {
     <tr valign="top">
       <th scope="row">API Root URL</th>
       <td><input type="text" name="adgear_api_root_url" size="40" value="<?php echo get_option('adgear_api_root_url', 'http://api.admin.adgear.com/'); ?>" /></td>
+    </tr>
+    <tr valign="top">
+      <th scope="row">Enable shortcodes in sidebar</th>
+      <td>
+        <select name="adgear_enable_shortcode_in_sidebar">
+          <option value="no"<?php echo (get_option( 'adgear_enable_shortcode_in_sidebar' ) != "yes") ? " selected" : "" ?>>No</option>
+          <option value="yes"<?php echo (get_option( 'adgear_enable_shortcode_in_sidebar' ) == "yes") ? " selected" : "" ?>>Yes</option>
+        </select>
+        <p>There are security implications in enabling this setting.</p>
+      </td>
     </tr>
     <tr valign="top">
       <th scope="row">AdGear Site</th>
