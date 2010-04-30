@@ -114,6 +114,7 @@ function adgear_ad_handler($atts) {
           $pathname[] = $cat->cat_name;
         }
       }
+      $pathname = sort( $pathname );
       break;
 
     case "by_tags":
@@ -124,6 +125,7 @@ function adgear_ad_handler($atts) {
           $pathname[] = $tag->name;
         }
       }
+      $pathname = sort( $pathname );
       break;
 
     default:
