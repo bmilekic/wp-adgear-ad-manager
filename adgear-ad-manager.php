@@ -47,19 +47,64 @@ function adgear_output_site_embed_tag() {
   $embed_code = get_option('adgear_site_embed_code');
   if ( !$embed_code ) return;
 
+  echo "<!-- adgear site embed tag -->\n";
   echo $embed_code;
+}
+
+function adgear_cleanup_obsolete_ad_spot_data() {
+  $csv = get_option( 'adgear_ad_spots_csv' );
+  if ( $csv ) {
+    $log .= "adgear_ad_spots_csv contained:\n---\n$csv\n---\n\n";
+    foreach( explode( "\n", $csv ) as $line ) {
+      $row = explode( ",", $line );
+      $key = 'adgear_adspot_embed_code_'. $row[0];
+      if ( $key != "" ) delete_option( $key );
+    }
+  }
 }
 
 function adgear_update_site_embed_code($old_value, $new_value) {
   if ( $old_value == $new_value ) return;
 
+  $log = "";
   $sites = adgear_get_service_data( 'list_sites' );
+
   foreach( $sites["sites"] as $site ) {
     if ( $site["id"] == $new_value ) {
-      update_option( 'adgear_site_embed_code', $site['embed_code'] );
+      update_option( 'adgear_site_embed_code', $site["embed_code"] );
+      update_option( 'adgear_site_chip_key', $site["chip_key"] );
+
+      adgear_cleanup_obsolete_ad_spot_data();
+
+      if ( $site["dynamic"] ) {
+        update_option( 'adgear_site_is_dynamic', TRUE );
+        update_option( 'adgear_site_universal_embed_code', $site["universal_embed_code"] );
+        delete_option( 'adgear_ad_spots_csv' );
+      } else {
+        update_option( 'adgear_site_is_dynamic', FALSE);
+        delete_option( 'adgear_site_universal_embed_code' );
+
+        foreach( $site["_urls"] as $service ) {
+          if ( $service["name"] == "list_ad_spots" ) {
+            $ad_spots = adgear_api_call( $service["url"] );
+            $csv = "";
+
+            foreach($ad_spots["ad_spots"] as $ad_spot) {
+              $csv .= $ad_spot['id'] .','. $ad_spot['name'] .','. $ad_spot['format_id'] . "\n";
+              update_option( 'adgear_adspot_embed_code_'.$ad_spot['id'], $ad_spot['embed_code'] );
+            }
+
+            update_option( 'adgear_ad_spots_csv', $csv );
+            break;
+          }
+        }
+      }
+
       break;
     }
   }
+
+  update_option( 'adgear_log', $log );
 }
 
 /* Returns JSON decoded data from a call to the AdGear API.
@@ -97,6 +142,28 @@ function adgear_get_service_data( $service_name ) {
   return $data;
 }
 
+function adgear_api_call( $url ) {
+  $ch = curl_init();
+
+  $username = get_option('adgear_api_username');
+  if ($username == FALSE) return array();
+
+  $password = get_option('adgear_api_key');
+  $root_url = get_option('adgear_api_root_url');
+
+  $timeout = 5;
+  curl_setopt($ch, CURLOPT_URL, $url);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+  curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+  curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
+
+  $data = json_decode(curl_exec($ch), TRUE);
+
+  curl_close($ch);
+  return $data;
+}
+
 function adgear_create_menu() {
   add_submenu_page( 'options-general.php', 'AdGear Settings', 'AdGear Settings', 'administrator', __FILE__, 'adgear_settings_page' );
   add_action( 'admin_init', 'adgear_register_settings' );
@@ -107,7 +174,6 @@ function adgear_register_settings() {
   register_setting( 'adgear-settings-group', 'adgear_api_key' );
   register_setting( 'adgear-settings-group', 'adgear_api_root_url' );
   register_setting( 'adgear-settings-group', 'adgear_site_id' );
-  register_setting( 'adgear-settings-group', 'adgear_site_embed_code' );
 }
 
 function adgear_settings_page() {
