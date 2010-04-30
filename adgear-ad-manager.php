@@ -41,7 +41,7 @@ function adgear_init() {
   } else {
     add_action('wp_head', 'adgear_output_site_embed_tag');
 
-    if ( get_option( 'adgear_enable_shortcode_in_sidebar' ) ) {
+    if ( 'yes' == get_option( 'adgear_enable_shortcode_in_sidebar' ) ) {
       add_filter('widget_text', 'do_shortcode');
     }
   }
