@@ -96,7 +96,14 @@ function adgear_ad_handler($atts) {
     "format"  => "",
     "path"    => "",
     "slugify" => "",
+    "single"  => "",
   ), $atts));
+
+  // If this tag should render only on single posts page, and we're not on a single post, abort
+  if ($single == 'yes' && !is_single()) return "";
+
+  // If this tag should render only on listing pages, and we're on a single post, abort
+  if ($single == 'no'  &&  is_single()) return "";
 
   if ( $id ) {
     return adgear_ad( $id );
