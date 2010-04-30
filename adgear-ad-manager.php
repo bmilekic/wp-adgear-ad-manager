@@ -91,20 +91,54 @@ function adgear_ad() {
 
 function adgear_ad_handler($atts) {
   extract(shortcode_atts(array(
-    "id"     => "",
-    "name"   => "",
-    "format" => "",
-    "path"   => "",
+    "id"      => "",
+    "name"    => "",
+    "format"  => "",
+    "path"    => "",
+    "slugify" => "",
   ), $atts));
 
   if ( $id ) {
     return adgear_ad( $id );
   } else if ( $name ) {
     return adgear_ad( $name );
+  } else if ( $format && $path ) {
+    $pathname = array();
+
+    switch( $path ) {
+    case "by_categories":
+      global $post;
+      $postcats = get_the_category($post->ID);
+      if ( $postcats ) {
+        foreach( $postcats as $cat ) {
+          $pathname[] = $cat->cat_name;
+        }
+      }
+      break;
+
+    case "by_tags":
+      global $post;
+      $posttags = get_the_tags($post->ID);
+      if ( $posttags ) {
+        foreach( $posttags as $tag ) {
+          $pathname[] = $tag->name;
+        }
+      }
+      break;
+
+    default:
+      $pathname = explode( ',', $path );
+      break;
+    }
+
+    if ( $slugify == "1" || $slugify == "yes" ) {
+      $post = get_post( get_the_ID() );
+      $pathname[] = $post->post_name;
+    }
+
+    return adgear_ad( $format, $pathname);
   } else if ( $format ) {
     return adgear_ad( $format, array() );
-  } else if ( $format && $path ) {
-    return adgear_ad( $format, explode( ',', $path ) );
   } else {
     return "<!-- adgear_serve_ad_tag could not understand atts -->";
   }
