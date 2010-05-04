@@ -77,7 +77,7 @@ function adgear_ad() {
       $match = func_get_arg(0);
       foreach( explode( "\n", $csv ) as $line ) {
         $row = explode( ",", $line );
-        if ( $row[0] == $match || ( array_length( $row ) == 3 && $row[1] == $match ) ) {
+        if ( $row[0] == $match || (is_array($row) && array_length( $row ) == 3 && $row[1] == $match ) ) {
           $key = 'adgear_adspot_embed_code_'. $row[0];
           $embed_code = get_option( $key );
           break;
