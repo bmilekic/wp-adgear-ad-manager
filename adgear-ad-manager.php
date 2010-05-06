@@ -72,18 +72,9 @@ function adgear_ad() {
       $embed_code = preg_replace( '/"path"\s*:\s*\[.*\]/', '"path":'.json_encode( array() ), $embed_code );
     }
   } else {
-    $csv = get_option( 'adgear_ad_spots_csv' );
-    if ( $csv ) {
-      $match = func_get_arg(0);
-      foreach( explode( "\n", $csv ) as $line ) {
-        $row = explode( ",", $line );
-        if ( $row[0] == $match || (is_array($row) && count( $row ) == 3 && $row[1] == $match ) ) {
-          $key = 'adgear_adspot_embed_code_'. $row[0];
-          $embed_code = get_option( $key );
-          break;
-        }
-      }
-    }
+    $id = func_get_arg(0);
+    $key = 'adgear_adspot_embed_code_'. $id;
+    $embed_code = get_option( $key, "<p class='adgear-warning'><strong>WARNING</strong>: AdSpot $id is unknown and cannot be served.</p>" );
   }
 
   return $embed_code;
@@ -92,7 +83,6 @@ function adgear_ad() {
 function adgear_ad_handler($atts) {
   extract(shortcode_atts(array(
     "id"      => "",
-    "name"    => "",
     "format"  => "",
     "path"    => "",
     "slugify" => "",
@@ -105,11 +95,9 @@ function adgear_ad_handler($atts) {
   // If this tag should render only on listing pages, and we're on a single post, abort
   if ($single == 'no'  &&  is_single()) return "";
 
-  if ( $id ) {
+  if ( !get_option( 'adgear_site_is_dynamic' ) && $id ) {
     return adgear_ad( $id );
-  } else if ( $name ) {
-    return adgear_ad( $name );
-  } else if ( $format && $path ) {
+  } else if ( get_option( 'adgear_site_is_dynamic' ) && $format && $path ) {
     $pathname = array();
 
     switch( $path ) {
@@ -146,10 +134,10 @@ function adgear_ad_handler($atts) {
     }
 
     return adgear_ad( $format, $pathname);
-  } else if ( $format ) {
+  } else if ( get_option( 'adgear_site_is_dynamic' ) && $format ) {
     return adgear_ad( $format, array() );
   } else {
-    return "<!-- adgear_serve_ad_tag could not understand atts -->";
+    return "<p class='adgear-warning'><strong>WARNING</strong>: AdGear Ad Manager did not understand the embed code. This would be because you used a dynamic embed code on a dynamic site, or the reverse.</p>";
   }
 }
 add_shortcode('adgear_ad', 'adgear_ad_handler');

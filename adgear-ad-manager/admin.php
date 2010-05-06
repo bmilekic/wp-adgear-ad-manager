@@ -213,7 +213,7 @@ function adgear_meta_box_form() {
         <table class="form-table">
 <?php if ( get_option( 'adgear_site_is_dynamic' ) ) { ?>
             <tr valign="top">
-                <th scope="row"><label for="adgear_format"><?php _e('Ad Format:')?></label></th>
+                <th scope="row"><label for="adgear_format_id"><?php _e('Ad Format:')?></label></th>
                 <td>
                     <select name="adgear[format_id]" id="adgear_format_id">
                       <option>Choose an Ad format&hellip;</option>
@@ -227,7 +227,28 @@ function adgear_meta_box_form() {
                     </select>
                 </td>
             </tr>
-<?php } else { ?>
+            <tr valign="top">
+              <th scope="row"><label for="adgear_type"><?php _e('Path type:')?></label></th>
+              <td>
+                <select name="adgear[type]" id="adgear_type">
+                  <option value="categories">Using the post's categories</option>
+                  <option value="tags">Using the post's tags</option>
+                  <option value="path">Using a static path:</option>
+                </select>
+                <br/>
+                <input name="adgear[path]" id="adgear_path" type="text" size="40" style="width:95%"/>
+              </td>
+            </tr>
+            <tr valign="top">
+              <th scope="row"><label for="adgear_slugify"><?php _e('Use post\'s slug in path:')?></label></th>
+              <td>
+                <select id="adgear_slugify" name="adgear[slugify]">
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </td>
+            </tr>
+<?php } /* dynamic site */ else /* static site */ { ?>
             <tr valign="top">
                 <th scope="row"><label for="adgear_adspot_id"><?php _e('Ad Spot:')?></label></th>
                 <td>
@@ -244,21 +265,35 @@ function adgear_meta_box_form() {
                 </td>
             </tr>
 <?php } /* static site */ ?>
+            <tr valign="top">
+              <th scope="row"><label for="adgear_single"><?php _e('When to show this ad:')?></label></th>
+              <td>
+                <select id="adgear_single" name="adgear[single]">
+                  <option value="all">All the time</option>
+                  <option value="yes">On single post pages only</option>
+                  <option value="no">On list pages only</option>
+                </select>
+              </td>
+            </tr>
           <tr valign="top">
             <th scope="row"><label for="adgear_embed_code"><?php _e('Embed Code:')?></label></th>
             <td>
               <input type="text" id="adgear_embed_code" name="adgear[embed_code]" size="40" style="width:95%;" autocomplete="off" />
             </td>
+          </tr>
         </table>
         <p class="submit">
           <input type="button" id="adgear_send_embed_code_to_editor" value="<?php _e('Send Embed Code to Editor &raquo;'); ?>" />
         </p>
+        <div style="display:none;margin:0;padding:0">
+          <input type="hidden" name="adgear[is_dynamic]" value="<?php echo get_option( 'adgear_site_is_dynamic' ); ?>" id="adgear_site_is_dynamic"/>
+        </div>
 <?php
 }
 
 function adgear_admin_head () {
   if ($GLOBALS['editing']) {
-    wp_enqueue_script('adgearAdmin', get_bloginfo('wpurl') . '/wp-content/plugins/adgear-ad-manager/adgear-meta.js', array('jquery', 'media-upload'), '1.0.0');
+    wp_enqueue_script('adgearAdmin', get_bloginfo('wpurl') . '/wp-content/plugins/adgear-ad-manager/adgear-meta.js', array('jquery'), '1.0.0');
   }
 }
 
@@ -326,7 +361,6 @@ function adgear_settings_page() {
   <p class="submit">
     <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
   </p>
-<pre><code><?php var_dump( adgear_ad_spots() ); ?></code></pre>
 </form>
 </div>
 <?php } ?>
