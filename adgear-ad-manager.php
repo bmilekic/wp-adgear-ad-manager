@@ -95,6 +95,17 @@ function adgear_ad_handler($atts) {
   // If this tag should render only on listing pages, and we're on a single post, abort
   if ($single == 'no'  &&  is_single()) return "";
 
+//  echo "<pre><code>";
+//  var_dump(array(
+//    "id"              => $id,
+//    "format"          => $format,
+//    "path"            => $path,
+//    "slugify"         => $slugify,
+//    "single"          => $single,
+//    "site_is_dynamic" => get_option( 'adgear_site_is_dynamic' ),
+//  ));
+//  echo "</code></pre>";
+
   if ( !get_option( 'adgear_site_is_dynamic' ) && $id ) {
     return adgear_ad( $id );
   } else if ( get_option( 'adgear_site_is_dynamic' ) && $format && $path ) {
