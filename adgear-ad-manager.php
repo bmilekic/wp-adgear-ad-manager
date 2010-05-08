@@ -54,6 +54,10 @@ function adgear_output_site_embed_tag() {
   echo $embed_code;
 }
 
+function adgear_warning_css_properties() {
+  return "background:#c33;margin:inherited 2em;padding:.5em;color:#000;";
+}
+
 function adgear_ad() {
   echo "<!-- adgear adspot embed tag -->\n";
   $embed_code = "";
@@ -74,7 +78,7 @@ function adgear_ad() {
   } else {
     $id = func_get_arg(0);
     $key = 'adgear_adspot_embed_code_'. $id;
-    $embed_code = get_option( $key, "<p class='adgear-warning'><strong>WARNING</strong>: AdSpot $id is unknown and cannot be served.</p>" );
+    $embed_code = get_option( $key, "<p style='".adgear_warning_css_properties()."'><strong>WARNING</strong>: AdSpot $id is unknown and cannot be served.</p>" );
   }
 
   return $embed_code;
@@ -152,7 +156,7 @@ function adgear_ad_handler($atts) {
   } else if ( adgear_is_dynamic_site() && $format ) {
     return adgear_ad( $format, array() );
   } else {
-    return "<p class='adgear-warning'><strong>WARNING</strong>: AdGear Ad Manager did not understand the embed code. This would be because you used a dynamic embed code on a dynamic site, or the reverse.</p>";
+    return "<p style='".adgear_warning_css_properties()."'><strong>WARNING</strong>: AdGear Ad Manager did not understand the embed code. This would be because you used a dynamic embed code on a dynamic site, or the reverse.</p>";
   }
 }
 add_shortcode('adgear_ad', 'adgear_ad_handler');
