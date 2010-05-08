@@ -214,7 +214,7 @@ function adgear_meta_box_form() {
                 <th scope="row"><label for="adgear_format_id"><?php _e('Ad Format:')?></label></th>
                 <td>
                     <select name="adgear[format_id]" id="adgear_format_id">
-                      <option>Choose an Ad format&hellip;</option>
+                      <option value="">Choose an Ad format&hellip;</option>
 <?php
                     foreach( adgear_formats() as $format ) {
 ?>
@@ -251,7 +251,7 @@ function adgear_meta_box_form() {
                 <th scope="row"><label for="adgear_adspot_id"><?php _e('Ad Spot:')?></label></th>
                 <td>
                     <select name="adgear[adspot_id]" id="adgear_adspot_id">
-                      <option>Choose the AdSpot&hellip;</option>
+                      <option value="">Choose the AdSpot&hellip;</option>
 <?php
                       foreach( adgear_ad_spots() as $adspot ) {
 ?>
@@ -276,7 +276,7 @@ function adgear_meta_box_form() {
           <tr valign="top">
             <th scope="row"><label for="adgear_embed_code"><?php _e('Embed Code:')?></label></th>
             <td>
-              <input type="text" id="adgear_embed_code" name="adgear[embed_code]" size="40" style="width:95%;" autocomplete="off" />
+            <input type="text" id="adgear_embed_code" name="adgear[embed_code]" size="40" style="width:95%;" autocomplete="off" />
             </td>
           </tr>
         </table>
@@ -286,6 +286,13 @@ function adgear_meta_box_form() {
         <div style="display:none;margin:0;padding:0">
           <input type="hidden" name="adgear[is_dynamic]" value="<?php echo get_option( 'adgear_site_is_dynamic' ); ?>" id="adgear_site_is_dynamic"/>
         </div>
+        <script type="text/javascript"><?php
+// Correctly set a value in the embed code field
+                    if ( get_option( 'adgear_site_is_dynamic' ) ) {
+                      echo "adgearDynamicSiteChange(jQuery)";
+                    } else {
+                      echo "adgearStaticSiteChange(jQuery)";
+                    } ?></script>
 <?php
 }
 
