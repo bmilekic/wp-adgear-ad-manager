@@ -1,6 +1,6 @@
 (function($) {
   $(document).ready(function() {
-    var dynamic = $("adgear_site_is_dynamic").val() === "1";
+    var dynamic = $("#adgear_site_is_dynamic").val() === "1";
 
     $("#adgear_adspot_id, #adgear_single").change(function(ev) {
       if (dynamic) return;
