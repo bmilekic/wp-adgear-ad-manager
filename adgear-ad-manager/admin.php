@@ -209,7 +209,7 @@ function adgear_ad_spots() {
 function adgear_meta_box_form() {
 ?>
         <table class="form-table">
-<?php if ( get_option( 'adgear_site_is_dynamic' ) ) { ?>
+<?php if ( adgear_is_dynamic_site() ) { ?>
             <tr valign="top">
                 <th scope="row"><label for="adgear_format_id"><?php _e('Ad Format:')?></label></th>
                 <td>
@@ -284,11 +284,11 @@ function adgear_meta_box_form() {
           <input type="button" id="adgear_send_embed_code_to_editor" value="<?php _e('Send Embed Code to Editor &raquo;'); ?>" />
         </p>
         <div style="display:none;margin:0;padding:0">
-          <input type="hidden" name="adgear[is_dynamic]" value="<?php echo get_option( 'adgear_site_is_dynamic' ); ?>" id="adgear_site_is_dynamic"/>
+          <input type="hidden" name="adgear[is_dynamic]" value="<?php echo adgear_is_dynamic_site(); ?>" id="adgear_site_is_dynamic"/>
         </div>
         <script type="text/javascript"><?php
 // Correctly set a value in the embed code field
-                    if ( get_option( 'adgear_site_is_dynamic' ) ) {
+                    if ( adgear_is_dynamic_site() ) {
                       echo "adgearDynamicSiteChange(jQuery)";
                     } else {
                       echo "adgearStaticSiteChange(jQuery)";
