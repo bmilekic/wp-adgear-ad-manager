@@ -57,7 +57,7 @@ function adgear_output_site_embed_tag() {
 function adgear_ad() {
   echo "<!-- adgear adspot embed tag -->\n";
   $embed_code = "";
-  if ( get_option( 'adgear_site_is_dynamic' ) ) {
+  if ( adgear_is_dynamic_site() ) {
     $format = func_get_arg(0);
     $path   = func_get_arg(1);
 
@@ -78,6 +78,10 @@ function adgear_ad() {
   }
 
   return $embed_code;
+}
+
+function adgear_is_dynamic_site() {
+  return get_option( 'adgear_site_is_dynamic', FALSE );
 }
 
 function adgear_ad_handler($atts) {
@@ -102,13 +106,13 @@ function adgear_ad_handler($atts) {
 //    "path"            => $path,
 //    "slugify"         => $slugify,
 //    "single"          => $single,
-//    "site_is_dynamic" => get_option( 'adgear_site_is_dynamic' ),
+//    "site_is_dynamic" => adgear_is_dynamic_site(),
 //  ));
 //  echo "</code></pre>";
 
-  if ( !get_option( 'adgear_site_is_dynamic' ) && $id ) {
+  if ( !adgear_is_dynamic_site() && $id ) {
     return adgear_ad( $id );
-  } else if ( get_option( 'adgear_site_is_dynamic' ) && $format && $path ) {
+  } else if ( adgear_is_dynamic_site() && $format && $path ) {
     $pathname = array();
 
     switch( $path ) {
@@ -145,7 +149,7 @@ function adgear_ad_handler($atts) {
     }
 
     return adgear_ad( $format, $pathname);
-  } else if ( get_option( 'adgear_site_is_dynamic' ) && $format ) {
+  } else if ( adgear_is_dynamic_site() && $format ) {
     return adgear_ad( $format, array() );
   } else {
     return "<p class='adgear-warning'><strong>WARNING</strong>: AdGear Ad Manager did not understand the embed code. This would be because you used a dynamic embed code on a dynamic site, or the reverse.</p>";
