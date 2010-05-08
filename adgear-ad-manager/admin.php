@@ -87,8 +87,6 @@ function adgear_update_site_embed_code($old_value, $new_value) {
       break;
     }
   }
-
-  update_option( 'adgear_log', $log );
 }
 
 /* Returns JSON decoded data from a call to the AdGear API.
