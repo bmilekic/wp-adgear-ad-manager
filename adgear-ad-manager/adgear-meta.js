@@ -25,14 +25,17 @@
 
       switch(pathType) {
         case 'categories':
+          $("#adgear_path").hide();
           pathParam = "by_categories";
           break;
 
         case 'tags':
+          $("#adgear_path").hide();
           pathParam = "by_tags";
           break;
 
         default:
+          $("#adgear_path").show();
           pathParam = '"' + path + '"';
           break;
       }
