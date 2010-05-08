@@ -234,7 +234,7 @@ function adgear_meta_box_form() {
                   <option value="path">Using a static path:</option>
                 </select>
                 <br/>
-                <input name="adgear[path]" id="adgear_path" type="text" size="40" style="width:95%"/>
+                <input name="adgear[path]" id="adgear_path" type="text" size="40" style="width:95%;display:none"/>
               </td>
             </tr>
             <tr valign="top">
