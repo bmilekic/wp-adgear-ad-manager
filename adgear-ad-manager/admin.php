@@ -267,7 +267,7 @@ function adgear_meta_box_form() {
               <th scope="row"><label for="adgear_single"><?php _e('When to show this ad:')?></label></th>
               <td>
                 <select id="adgear_single" name="adgear[single]">
-                  <option value="all">All the time</option>
+                  <option value="all">On all pages</option>
                   <option value="yes">On single post pages only</option>
                   <option value="no">On list pages only</option>
                 </select>
