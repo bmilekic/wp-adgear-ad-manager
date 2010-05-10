@@ -247,7 +247,7 @@ function adgear_path_type_selector_ui($args) {
     <option <?php if ($selected == "path")       { echo "selected"; } ?> value="path">Using a static path:</option>
   </select>
   <br/>
-  <input class="adgear_path" name="<?php echo $path_name; ?>" id="<?php echo $path_id; ?>" type="text" size="40" style="width:95%" value="<?php echo $path_selected; ?>"/>
+  <input class="adgear_path" name="<?php echo $path_name; ?>" id="<?php echo $path_id; ?>" type="text" size="40" style="width:95%<?php if ( $selected != "path" ) { echo ';display:none'; } ?>" value="<?php echo $path_selected; ?>"/>
 <?php
 }
 
