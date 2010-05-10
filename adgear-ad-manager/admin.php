@@ -114,10 +114,11 @@ function adgear_get_service_data( $service_name ) {
     return array();
   }
 
+  $service_data = adgear_object_to_array( $service_data );
   $service_url = "";
-  foreach( $service_data->_urls as $service ) {
-    if ( $service->name == $service_name ) {
-      $service_url = $service->url;
+  foreach( $service_data["_urls"] as $service ) {
+    if ( $service["name"] == $service_name ) {
+      $service_url = $service["url"];
     }
   }
 
