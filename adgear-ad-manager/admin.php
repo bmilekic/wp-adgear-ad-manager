@@ -176,7 +176,6 @@ function adgear_register_settings() {
   register_setting( 'adgear-settings-group', 'adgear_api_key' );
   register_setting( 'adgear-settings-group', 'adgear_api_root_url' );
   register_setting( 'adgear-settings-group', 'adgear_site_id' );
-  register_setting( 'adgear-settings-group', 'adgear_enable_shortcode_in_sidebar' );
 }
 
 function adgear_admin_menu() {
@@ -270,16 +269,6 @@ function adgear_settings_page() {
     <tr valign="top">
       <th scope="row">API Root URL</th>
       <td><input type="text" name="adgear_api_root_url" size="40" value="<?php echo get_option('adgear_api_root_url', 'http://api.admin.adgear.com/'); ?>" /></td>
-    </tr>
-    <tr valign="top">
-      <th scope="row">Enable shortcodes in sidebar</th>
-      <td>
-        <select name="adgear_enable_shortcode_in_sidebar">
-          <option value="no"<?php echo (get_option( 'adgear_enable_shortcode_in_sidebar' ) != "yes") ? " selected" : "" ?>>No</option>
-          <option value="yes"<?php echo (get_option( 'adgear_enable_shortcode_in_sidebar' ) == "yes") ? " selected" : "" ?>>Yes</option>
-        </select>
-        <p>There are security implications in enabling this setting.</p>
-      </td>
     </tr>
     <tr valign="top">
       <th scope="row">AdGear Site</th>

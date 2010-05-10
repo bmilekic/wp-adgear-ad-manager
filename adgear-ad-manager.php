@@ -39,10 +39,6 @@ function adgear_init() {
     require_once(dirname(__FILE__) . "/adgear-ad-manager/admin.php");
   } else {
     add_action('wp_head', 'adgear_output_site_embed_tag');
-
-    if ( 'yes' == get_option( 'adgear_enable_shortcode_in_sidebar' ) ) {
-      add_filter('widget_text', 'do_shortcode');
-    }
   }
 }
 
