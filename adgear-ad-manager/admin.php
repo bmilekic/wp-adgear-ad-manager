@@ -108,7 +108,11 @@ function adgear_get_service_data( $service_name ) {
   curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
   curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
 
-  $service_data = json_decode(curl_exec($ch), false);
+  $service_data = json_decode( curl_exec($ch), true );
+  if ( is_null( $service_data ) ) {
+    // TODO: Signal error condition somehow
+    return array();
+  }
 
   $service_url = "";
   foreach( $service_data->_urls as $service ) {
@@ -118,7 +122,7 @@ function adgear_get_service_data( $service_name ) {
   }
 
   curl_setopt($ch, CURLOPT_URL, $service_url);
-  $data = json_decode(curl_exec($ch), false);
+  $data = json_decode(curl_exec($ch), true);
   curl_close($ch);
 
   return adgear_object_to_array( $data );
@@ -284,6 +288,11 @@ function adgear_settings_page() {
   if ( get_option('adgear_api_username') && get_option('adgear_api_key') && get_option('adgear_api_root_url') ) {
     /* API username set, so we presume we can talk to AdGear */
     $sites = adgear_get_service_data( 'list_sites' );
+    if ( empty( $sites ) ) {
+      echo '<span style="color:#c33;">';
+      echo _e('Your AdGear credentials appear to be incorrect: we couldn\'t find any configured sites in your account. Create a site in AdGear or verify your credentials.');
+      echo "</span>";
+    } else {
 ?>
         <select name="adgear_site_id">
 <?php
@@ -295,6 +304,7 @@ function adgear_settings_page() {
 ?>
         </select>
 <?php
+    }
   } else {
     /* Configuration not set yet */
 ?>
