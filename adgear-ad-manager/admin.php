@@ -108,20 +108,36 @@ function adgear_get_service_data( $service_name ) {
   curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
   curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
 
-  $service_data = json_decode(curl_exec($ch), TRUE);
+  $service_data = json_decode(curl_exec($ch), false);
 
   $service_url = "";
-  foreach( $service_data["_urls"] as $service ) {
-    if ( $service["name"] == $service_name ) {
-      $service_url = $service["url"];
+  foreach( $service_data->_urls as $service ) {
+    if ( $service->name == $service_name ) {
+      $service_url = $service->url;
     }
   }
 
   curl_setopt($ch, CURLOPT_URL, $service_url);
-  $data = json_decode(curl_exec($ch), TRUE);
-
+  $data = json_decode(curl_exec($ch), false);
   curl_close($ch);
-  return $data;
+
+  return adgear_object_to_array( $data );
+}
+
+function adgear_object_to_array( $object ) {
+  if ( is_string( $object ) || is_numeric( $object ) || is_null( $object ) || is_bool( $object ) ) {
+    $array = $object;
+  } else if ( is_array( $object ) || is_object( $object ) ) {
+    $array = array();
+    foreach( $object as $key => $value ) {
+      $array[$key] = adgear_object_to_array( $value );
+    }
+  } else {
+    echo "What have I got???\n";
+    var_dump( $object );
+  }
+
+  return $array;
 }
 
 function adgear_api_call( $url ) {
