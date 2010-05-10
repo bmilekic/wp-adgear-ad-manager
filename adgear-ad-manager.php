@@ -171,29 +171,29 @@ function adgear_update_site_embed_code($old_value, $new_value) {
   $log = "";
   $sites = adgear_get_service_data( 'list_sites' );
 
-  foreach( $sites["sites"] as $site ) {
-    if ( $site["id"] == $new_value ) {
-      update_option( 'adgear_site_embed_code', $site["embed_code"] );
-      update_option( 'adgear_site_chip_key', $site["chip_key"] );
+  foreach( $sites->sites as $site ) {
+    if ( $site->id == $new_value ) {
+      update_option( 'adgear_site_embed_code', $site->embed_code );
+      update_option( 'adgear_site_chip_key', $site->chip_key );
 
       adgear_cleanup_obsolete_ad_spot_data();
 
-      if ( $site["dynamic"] ) {
+      if ( $site->dynamic ) {
         update_option( 'adgear_site_is_dynamic', TRUE );
-        update_option( 'adgear_site_universal_embed_code', $site["universal_embed_code"] );
+        update_option( 'adgear_site_universal_embed_code', $site->universal_embed_code );
         delete_option( 'adgear_ad_spots_csv' );
       } else {
         update_option( 'adgear_site_is_dynamic', FALSE);
         delete_option( 'adgear_site_universal_embed_code' );
 
-        foreach( $site["_urls"] as $service ) {
-          if ( $service["name"] == "list_ad_spots" ) {
-            $ad_spots = adgear_api_call( $service["url"] );
+        foreach( $site->_urls as $service ) {
+          if ( $service->name == "list_ad_spots" ) {
+            $ad_spots = adgear_api_call( $service->url );
             $csv = "";
 
-            foreach($ad_spots["ad_spots"] as $ad_spot) {
-              $csv .= $ad_spot['id'] .','. $ad_spot['name'] .','. $ad_spot['format_id'] . "\n";
-              update_option( 'adgear_adspot_embed_code_'.$ad_spot['id'], $ad_spot['embed_code'] );
+            foreach($ad_spots->ad_spots as $ad_spot) {
+              $csv .= $ad_spot->id .','. $ad_spot->name .','. $ad_spot->format_id . "\n";
+              update_option( 'adgear_adspot_embed_code_'.$ad_spot->id, $ad_spot->embed_code );
             }
 
             update_option( 'adgear_ad_spots_csv', $csv );
@@ -228,17 +228,16 @@ function adgear_get_service_data( $service_name ) {
   curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
   curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
 
-  $service_data = json_decode(curl_exec($ch), TRUE);
-
+  $service_data = json_decode(curl_exec($ch), false);
   $service_url = "";
-  foreach( $service_data["_urls"] as $service ) {
-    if ( $service["name"] == $service_name ) {
-      $service_url = $service["url"];
+  foreach( $service_data->_urls as $service ) {
+    if ( $service->name == $service_name ) {
+      $service_url = $service->url;
     }
   }
 
   curl_setopt($ch, CURLOPT_URL, $service_url);
-  $data = json_decode(curl_exec($ch), TRUE);
+  $data = json_decode(curl_exec($ch), false);
 
   curl_close($ch);
   return $data;
@@ -260,7 +259,7 @@ function adgear_api_call( $url ) {
   curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
   curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
 
-  $data = json_decode(curl_exec($ch), TRUE);
+  $data = json_decode(curl_exec($ch), false);
 
   curl_close($ch);
   return $data;
@@ -319,9 +318,9 @@ function adgear_settings_page() {
 ?>
         <select name="adgear_site_id">
 <?php
-    foreach($sites["sites"] as $site) {
+    foreach($sites->sites as $site) {
 ?>
-          <option value="<?php echo $site["id"]; ?>"<?php if ( $site["id"] == get_option('adgear_site_id') ) { echo ' selected="selected"'; } ?>><?php echo $site["name"]; ?></option>
+          <option value="<?php echo $site->id; ?>"<?php if ( $site->id == get_option('adgear_site_id') ) { echo ' selected="selected"'; } ?>><?php echo $site->name; ?></option>
 <?php
     }
 ?>
