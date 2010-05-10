@@ -165,112 +165,40 @@ function adgear_admin_menu() {
   add_meta_box('adgear_meta_box', 'AdGear Ad Manager', 'adgear_meta_box_form', 'page', 'normal');
 }
 
-function adgear_formats() {
-  $csv = get_option("adgear_formats_csv");
-  if ( $csv == "" ) return array();
-
-  $formats = array();
-  foreach( explode( "\n", $csv ) as $line ) {
-    $row = explode( ",", $line );
-    if ( count( $row ) > 0 ) {
-      $formats[] = array( "id" => $row[1], "name" => $row[0], "width" => $row[2], "height" => $row[3] );
-    }
-  }
-
-  return $formats;
-}
-
-function adgear_ad_spots() {
-  $csv = get_option("adgear_ad_spots_csv");
-  if ( $csv == "" ) return array();
-
-  $formats = adgear_formats();
-  $adspots = array();
-  foreach( explode( "\n", $csv ) as $line ) {
-    $row = explode( ",", $line );
-    if ( count( $row ) > 0 ) {
-      $width  = NULL;
-      $height = NULL;
-      foreach( $formats as $format ) {
-        if ( $format["id"] == $row[2] ) {
-          $width  = $format["width"];
-          $height = $format["height"];
-          break;
-        }
-      }
-
-      $adspots[] = array( "id" => $row[1], "name" => $row[0], "width" => $width, "height" => $height );
-    }
-  }
-
-  return $adspots;
-}
-
 function adgear_meta_box_form() {
 ?>
-        <table class="form-table">
+        <table id="adgear-meta" class="form-table adgear-meta">
 <?php if ( adgear_is_dynamic_site() ) { ?>
             <tr valign="top">
                 <th scope="row"><label for="adgear_format_id"><?php _e('Ad Format:')?></label></th>
                 <td>
-                    <select name="adgear[format_id]" id="adgear_format_id">
-                      <option value="">Choose an Ad format&hellip;</option>
-<?php
-                    foreach( adgear_formats() as $format ) {
-?>
-                      <option value="<?php echo $format["id"]; ?>"><?php echo $format["name"]; ?><?php if ( $format["width"] ) { ?> (<?php echo $format["width"]; ?>&times;<?php echo $format["height"]; ?>)<?php } ?></option>
-<?php
-                    }
-?>
-                    </select>
+                  <?php adgear_format_selector_ui( array( 'id' => 'adgear_format_id', 'name' => 'adgear[format_id]', 'selected' => '', 'include_blank' => true )); ?>
                 </td>
             </tr>
             <tr valign="top">
               <th scope="row"><label for="adgear_type"><?php _e('Path type:')?></label></th>
               <td>
-                <select name="adgear[type]" id="adgear_type">
-                  <option value="categories">Using the post's categories</option>
-                  <option value="tags">Using the post's tags</option>
-                  <option value="path">Using a static path:</option>
-                </select>
-                <br/>
-                <input name="adgear[path]" id="adgear_path" type="text" size="40" style="width:95%;display:none"/>
+                <?php adgear_path_type_selector_ui( array( 'id' => 'adgear_type', 'name' => 'adgear[type]', 'selected' => 'categories', 'path_id' => 'adgear_path', 'path_name' => 'adgear[path]', 'path_selected' => '' ) ); ?>
               </td>
             </tr>
             <tr valign="top">
               <th scope="row"><label for="adgear_slugify"><?php _e('Use post\'s slug in path:')?></label></th>
               <td>
-                <select id="adgear_slugify" name="adgear[slugify]">
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                </select>
+                <?php adgear_slugify_selector_ui( array( 'id' => 'adgear_slugify', 'name' => 'adgear[slugify]', 'selected' => 'yes') ); ?>
               </td>
             </tr>
 <?php } /* dynamic site */ else /* static site */ { ?>
             <tr valign="top">
                 <th scope="row"><label for="adgear_adspot_id"><?php _e('Ad Spot:')?></label></th>
                 <td>
-                    <select name="adgear[adspot_id]" id="adgear_adspot_id">
-                      <option value="">Choose the AdSpot&hellip;</option>
-<?php
-                      foreach( adgear_ad_spots() as $adspot ) {
-?>
-                        <option value="<?php echo $adspot["id"] ?>"><?php echo $adspot["name"]; ?><?php if ( $adspot["width"] ) { ?>&nbsp;(<?php echo $adspot["width"]; ?>&times;<?php echo $adspot["height"]; ?>)<?php } ?></option>
-<?php
-                      }
-?>
-                    </select>
+                  <?php adgear_adspot_selector_ui( array( 'id' => 'adgear_adspot_id', 'name' => 'adgear[adspot_id]', 'selected' => '' )); ?>
                 </td>
             </tr>
 <?php } /* static site */ ?>
             <tr valign="top">
               <th scope="row"><label for="adgear_single"><?php _e('When to show this ad:')?></label></th>
               <td>
-                <select id="adgear_single" name="adgear[single]">
-                  <option value="all">On all pages</option>
-                  <option value="yes">On single post pages only</option>
-                  <option value="no">On list pages only</option>
-                </select>
+                <?php adgear_single_selector_ui( array( 'id' => 'adgear_single', 'name' => 'adgear[single]', 'selected' => 'all' )); ?>
               </td>
             </tr>
           <tr valign="top">
@@ -289,17 +217,15 @@ function adgear_meta_box_form() {
         <script type="text/javascript"><?php
 // Correctly set a value in the embed code field
                     if ( adgear_is_dynamic_site() ) {
-                      echo "adgearDynamicSiteChange(jQuery)";
+                      echo "adgearDynamicSiteChange";
                     } else {
-                      echo "adgearStaticSiteChange(jQuery)";
-                    } ?></script>
+                      echo "adgearStaticSiteChange";
+                    } ?>(jQuery, "#adgear-meta");</script>
 <?php
 }
 
 function adgear_admin_head () {
-  if ($GLOBALS['editing']) {
-    wp_enqueue_script('adgearAdmin', get_bloginfo('wpurl') . '/wp-content/plugins/adgear-ad-manager/adgear-meta.js', array('jquery'), '1.0.0');
-  }
+  wp_enqueue_script('adgearAdmin', get_bloginfo('wpurl') . '/wp-content/plugins/adgear-ad-manager/adgear-meta.js', array('jquery'), '1.0.0');
 }
 
 add_action('admin_menu', 'adgear_admin_menu');
@@ -368,4 +294,7 @@ function adgear_settings_page() {
   </p>
 </form>
 </div>
-<?php } ?>
+<?php
+}
+
+?>
