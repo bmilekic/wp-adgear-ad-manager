@@ -298,9 +298,48 @@ class AdGearAdWidget extends WP_Widget {
 
     echo $before_widget;
 
+    $pathname = array();
+
     if ( adgear_is_dynamic_site() ) {
-      $path = array( 'Some Random Path' );
-      echo adgear_ad( $instance['format_id'], $path );
+      switch( $instance['path_type'] ) {
+      case 'categories':
+        global $post;
+        $postcats = get_the_category( $post->ID );
+        if ( $postcats ) {
+          foreach( $postcats as $cat ) {
+            $pathname[] = $cat->cat_name;
+          }
+        }
+        sort( $pathname );
+        break;
+
+      case 'tags':
+        global $post;
+        $posttags = get_the_tags( $post->ID );
+        if ( $posttags ) {
+          foreach( $posttags as $tag ) {
+            $pathname[] = $tag->name;
+          }
+        }
+        sort( $pathname );
+        break;
+
+      case 'path':
+        $pathname = explode( ',', $instance['path'] );
+        break;
+
+      default:
+        echo "<p style='".adgear_warning_css_properties()."'><strong>WARNING</strong>: Bad path_type specified: cannot serve (internal error). Submit a bug report to support@adgear.com.</p>";
+        echo $after_widget;
+        return;
+      }
+
+      if ( $instance['slugify'] == "yes" ) {
+        global $post;
+        $pathname[] = $post->post_name;
+      }
+
+      echo adgear_ad( $instance['format_id'], $pathname );
     } else {
       echo adgear_ad( $instance['adspot_id'] );
     }
