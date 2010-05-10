@@ -228,7 +228,7 @@ function adgear_get_service_data( $service_name ) {
   curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
   curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
 
-  $service_data = json_decode(curl_exec($ch), false);
+  $service_data = json_decode(curl_exec($ch), true);
   $service_url = "";
   foreach( $service_data->_urls as $service ) {
     if ( $service->name == $service_name ) {
@@ -237,7 +237,7 @@ function adgear_get_service_data( $service_name ) {
   }
 
   curl_setopt($ch, CURLOPT_URL, $service_url);
-  $data = json_decode(curl_exec($ch), false);
+  $data = json_decode(curl_exec($ch), true);
 
   curl_close($ch);
   return $data;
