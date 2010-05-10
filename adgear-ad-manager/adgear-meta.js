@@ -1,6 +1,5 @@
 function adgearStaticSiteChange($, root) {
   var root = $(root);
-  console.log(root);
 
   var adspot = root.find(".adgear_adspot_selector");
   var select = adspot.get()[0];
@@ -26,7 +25,6 @@ function adgearStaticSiteChange($, root) {
 
 function adgearDynamicSiteChange($, root) {
   var root = $(root);
-  console.log(root);
 
   var slugify    = root.find(".adgear_slugify_selector").val();
   var path       = root.find(".adgear_path").val();
