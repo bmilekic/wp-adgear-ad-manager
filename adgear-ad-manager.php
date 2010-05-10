@@ -13,7 +13,7 @@
 /*  Copyright 2010  Bloom Digital Platforms  ( adgear-wp@bloomdigital.com )
 
     This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as 
+    it under the terms of the GNU General Public License, version 2, as
     published by the Free Software Foundation.
 
     This program is distributed in the hope that it will be useful,
@@ -77,7 +77,7 @@ function adgear_ad() {
     }
   } else {
     $id = func_get_arg(0);
-    $key = 'adgear_adspot_embed_code_'. $id;
+    $key = 'adgear_adspot_embed_code_'.$id;
     $embed_code = get_option( $key, "<p style='".adgear_warning_css_properties()."'><strong>WARNING</strong>: AdSpot $id is unknown and cannot be served.</p>" );
   }
 
@@ -86,6 +86,47 @@ function adgear_ad() {
 
 function adgear_is_dynamic_site() {
   return get_option( 'adgear_site_is_dynamic', FALSE );
+}
+
+function adgear_formats() {
+  $csv = get_option("adgear_formats_csv");
+  if ( $csv == "" ) return array();
+
+  $formats = array();
+  foreach( explode( "\n", $csv ) as $line ) {
+    $row = explode( ",", $line );
+    if ( count( $row ) > 0 ) {
+      $formats[] = array( "id" => $row[1], "name" => $row[0], "width" => $row[2], "height" => $row[3] );
+    }
+  }
+
+  return $formats;
+}
+
+function adgear_ad_spots() {
+  $csv = get_option("adgear_ad_spots_csv");
+  if ( $csv == "" ) return array();
+
+  $formats = adgear_formats();
+  $adspots = array();
+  foreach( explode( "\n", $csv ) as $line ) {
+    $row = explode( ",", $line );
+    if ( count( $row ) > 0 ) {
+      $width  = NULL;
+      $height = NULL;
+      foreach( $formats as $format ) {
+        if ( $format["id"] == $row[2] ) {
+          $width  = $format["width"];
+          $height = $format["height"];
+          break;
+        }
+      }
+
+      $adspots[] = array( "id" => $row[1], "name" => $row[0], "width" => $width, "height" => $height );
+    }
+  }
+
+  return $adspots;
 }
 
 function adgear_ad_handler($atts) {
@@ -160,5 +201,173 @@ function adgear_ad_handler($atts) {
   }
 }
 add_shortcode('adgear_ad', 'adgear_ad_handler');
+
+function adgear_adspot_selector_ui($args) {
+  extract($args);
+?>
+  <select class="adgear_adspot_selector" id="<?php echo $id; ?>" name="<?php echo $name; ?>" >
+<?php
+    foreach( adgear_ad_spots() as $adspot ) {
+?>
+      <option <?php if ( $selected == $adspot["id"] ) { echo "selected"; } ?> value="<?php echo $adspot["id"] ?>"><?php echo $adspot["name"]; ?><?php if ( $adspot["width"] ) { ?>&nbsp;(<?php echo $adspot["width"]; ?>&times;<?php echo $adspot["height"]; ?>)<?php } ?></option>
+<?php
+    }
+?>
+  </select>
+<?php
+}
+
+function adgear_single_selector_ui($args) {
+  extract($args);
+?>
+  <select class="adgear_single_selector" id="<?php echo $id; ?>" name="<?php echo $name; ?>">
+    <option <?php if ( $selected == 'all' ) { echo "selected"; } ?> value="all">On all pages</option>
+    <option <?php if ( $selected == 'yes' ) { echo "selected"; } ?> value="yes">On single post pages only</option>
+    <option <?php if ( $selected == 'no'  ) { echo "selected"; } ?> value="no">On list pages only</option>
+  </select>
+<?php
+}
+
+function adgear_slugify_selector_ui($args) {
+  extract($args);
+?>
+  <select class="adgear_slugify_selector" id="<?php echo $id; ?>" name="<?php echo $name; ?>">
+    <option <?php if ($selected == "yes") { echo "selected"; } ?> value="yes">Yes</option>
+    <option <?php if ($selected == "no")  { echo "selected"; } ?> value="no">No</option>
+  </select>
+<?php
+}
+
+function adgear_path_type_selector_ui($args) {
+  extract($args);
+?>
+  <select class="adgear_path_type_selector" name="<?php echo $name; ?>" id="<?php echo $id; ?>">
+    <option <?php if ($selected == "categories") { echo "selected"; } ?> value="categories">Using the post's categories</option>
+    <option <?php if ($selected == "tags")       { echo "selected"; } ?> value="tags">Using the post's tags</option>
+    <option <?php if ($selected == "path")       { echo "selected"; } ?> value="path">Using a static path:</option>
+  </select>
+  <br/>
+  <input class="adgear_path" name="<?php echo $path_name; ?>" id="<?php echo $path_id; ?>" type="text" size="40" style="width:95%" value="<?php echo $path_selected; ?>"/>
+<?php
+}
+
+function adgear_format_selector_ui($args) {
+  extract($args);
+?>
+  <select class="adgear_format_selector" name="<?php echo $name; ?>" id="<?php echo $id; ?>">
+<?php if ( $include_blank ) { ?>
+    <option value="">Choose an Ad format&hellip;</option>
+<?php
+}
+  foreach( adgear_formats() as $format ) {
+?>
+    <option <?php if ( $selected == $format['id'] ) { echo "selected"; } ?> value="<?php echo $format["id"]; ?>"><?php echo $format["name"]; ?><?php if ( $format["width"] ) { ?> (<?php echo $format["width"]; ?>&times;<?php echo $format["height"]; ?>)<?php } ?></option>
+<?php
+  }
+?>
+  </select>
+<?php
+}
+
+/* Sidebar Widget */
+
+class AdGearAdWidget extends WP_Widget {
+  function AdGearAdWidget() {
+    $widget_ops = array(
+      'classname'   => 'adgear_ad',
+      'description' => 'Display your AdGear Ads in your sidebars' );
+    $this->WP_Widget('adgear_ad', 'AdGear Ad', $widget_ops);
+  }
+
+  function widget($args, $instance) {
+    extract($args, EXTR_SKIP);
+
+    // If this tag should render only on single posts page, and we're not on a single post, abort
+    if ($instance['single'] == 'yes' && !is_single()) return "";
+
+    // If this tag should render only on listing pages, and we're on a single post, abort
+    if ($instance['single'] == 'no'  &&  is_single()) return "";
+
+    echo $before_widget;
+
+    if ( adgear_is_dynamic_site() ) {
+      $path = array( 'Some Random Path' );
+      echo adgear_ad( $instance['format_id'], $path );
+    } else {
+      echo adgear_ad( $instance['adspot_id'] );
+    }
+
+    echo $after_widget;
+  }
+
+  function update($new_instance, $old_instance) {
+    $instance = $old_instance;
+
+    if ( adgear_is_dynamic_site() ) {
+      $keys = array( 'format_id', 'path_type', 'path', 'slugify', 'single' );
+    } else {
+      $keys = array( 'adspot_id', 'single' );
+    }
+
+    foreach( $keys as $key ) {
+      $instance[$key] = strip_tags( $new_instance[$key] );
+    }
+
+    return $instance;
+  }
+
+  function form($instance) {
+    if ( adgear_is_dynamic_site() ) {
+      $options = array( 'format_id' => '', 'path_type' => 'categories', 'path' => '', 'slugify' => 'yes', 'single' => 'all' );
+    } else {
+      $options = array( 'adspot_id' => '', 'single' => 'all' );
+    }
+
+    $instance = wp_parse_args( (array) $instance, $options );
+    $single   = strip_tags($instance['single']);
+
+    echo '<div class="adgear-meta" style="margin:0;padding:0">';
+    if ( adgear_is_dynamic_site() ) {
+      $format_id = strip_tags($instance['format_id']);
+      $path_type = strip_tags($instance['path_type']);
+      $path      = strip_tags($instance['path']);
+      $slugify   = strip_tags($instance['slugify']);
+?>
+      <p>
+        <label for="<?php echo $this->get_field_id('format_id'); ?>">Format:</label>
+        <?php adgear_format_selector_ui( array( 'id' => $this->get_field_id('format_id'), 'name' => $this->get_field_name('format_id'), 'selected' => $format_id, 'include_blank' => true )); ?>
+      </p>
+      <p>
+        <label for="<?php echo $this->get_field_id('path_type'); ?>">Path type:</label>
+        <?php adgear_path_type_selector_ui( array( 'id' => $this->get_field_id('path_type'), 'name' => $this->get_field_name('path_type'), 'selected' => $path_type, 'path_id' => $this->get_field_id('path'), 'path_name' => $this->get_field_name('path'), 'path_selected' => $path )); ?>
+      </p>
+      <p>
+        <label for="<?php echo $this->get_field_id('slugify'); ?>">Use post's slug in path:</label>
+        <?php adgear_slugify_selector_ui( array( 'id' => $this->get_field_id('slugify'), 'name' => $this->get_field_name('slugify'), 'selected' => $slugify )); ?>
+      </p>
+<?php
+    } else {
+      $adspot_id = strip_tags($instance['adspot_id']);
+?>
+      <p>
+        <label for="<?php echo $this->get_field_id('adspot_id'); ?>">Ad Spot:</label>
+        <?php adgear_adspot_selector_ui( array( 'id' => $this->get_field_id('adspot_id'), 'name' => $this->get_field_name('adspot_id'), 'selected' => $adspot_id )); ?>
+      </p>
+<?php
+    }
+?>
+      <p>
+        <label for="<?php $this->get_field_id('single'); ?>">When to show this ad:</label>
+        <?php adgear_single_selector_ui( array( 'id' => $this->get_field_id('single'), 'name' => $this->get_field_name('single'), 'selected' => $single)) ?>
+      </p>
+      <div style="display:none;margin:0;padding:0">
+        <input type="hidden" value="<?php echo adgear_is_dynamic_site(); ?>" id="adgear_site_is_dynamic"/>
+      </div>
+    </div>
+<?php
+  }
+}
+
+add_action( 'widgets_init', create_function('', 'return register_widget("AdGearAdWidget");') );
 
 ?>

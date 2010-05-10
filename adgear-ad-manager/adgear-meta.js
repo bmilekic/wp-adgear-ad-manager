@@ -1,58 +1,72 @@
-function adgearStaticSiteChange($) {
-  var adspot = $("#adgear_adspot_id");
+function adgearStaticSiteChange($, root) {
+  var root = $(root);
+  console.log(root);
+
+  var adspot = root.find(".adgear_adspot_selector");
   var select = adspot.get()[0];
   var option = $(select.options[select.selectedIndex]);
+
+  var sendCode = $("#adgear_send_embed_code_to_editor");
 
   var value, css;
   if (adspot.val() === "") {
     value = "Choose your ad spot first";
     css   = {"color": "#c33", "font-style": "italic"};
-    $("#adgear_send_embed_code_to_editor").css({opacity: 0.5}).get()[0].disabled = true;
+
+    if (sendCode) sendCode.css({opacity: 0.5}).get()[0].disabled = true;
   } else {
-    value = "[adgear_ad id=" + adspot.val() + " name=\"" + option.text() + "\" single=" + $("#adgear_single").val() + "]"
+    value = "[adgear_ad id=" + adspot.val() + " name=\"" + option.text() + "\" single=" + root.find(".adgear_single_selector").val() + "]"
     css   = {"color": "black", "font-style": "normal"};
-    $("#adgear_send_embed_code_to_editor").css({opacity: 1.0}).get()[0].disabled = false;
+
+    if (sendCode) sendCode.css({opacity: 1.0}).get()[0].disabled = false;
   }
 
   $("#adgear_embed_code").val(value).css(css);
 }
 
-function adgearDynamicSiteChange($) {
-  var slugify    = $("#adgear_slugify").val();
-  var path       = $("#adgear_path").val();
-  var format_id  = $("#adgear_format_id").val();
-  var pathType   = $("#adgear_type").val();
-  var single     = $("#adgear_single").val();
-  var format     = $("#adgear_format_id").get()[0];
+function adgearDynamicSiteChange($, root) {
+  var root = $(root);
+  console.log(root);
+
+  var slugify    = root.find(".adgear_slugify_selector").val();
+  var path       = root.find(".adgear_path").val();
+  var format_id  = root.find(".adgear_format_selector").val();
+  var pathType   = root.find(".adgear_path_type_selector").val();
+  var single     = root.find(".adgear_single_selector").val();
+  var format     = root.find(".adgear_format_selector").get()[0];
   var formatName = $(format.options[ format.selectedIndex ]).text();
   var pathParam;
 
   switch(pathType) {
     case 'categories':
-    $("#adgear_path").hide();
+    root.find(".adgear_path").hide();
     pathParam = "by_categories";
     break;
 
     case 'tags':
-    $("#adgear_path").hide();
+    root.find(".adgear_path").hide();
     pathParam = "by_tags";
     break;
 
     default:
-    $("#adgear_path").show();
+    root.find(".adgear_path").show();
     pathParam = '"' + path + '"';
     break;
   }
+
+  var sendCode = $("#adgear_send_embed_code_to_editor");
 
   var css, value;
   if (format_id === "") {
     value = "Choose your ad format first";
     css   = {"color": "#c33", "font-style": "italic"};
-    $("#adgear_send_embed_code_to_editor").css({opacity: 0.5}).get()[0].disabled = true;
+
+    if (sendCode) sendCode.css({opacity: 0.5}).get()[0].disabled = true;
   } else {
     value = "[adgear_ad format=" + format_id + " name=\"" + formatName + "\" single=" + single + " slugify=" + slugify + " path=" + pathParam + "]";
     css   = {"color": "black", "font-style": "normal"};
-    $("#adgear_send_embed_code_to_editor").css({opacity: 1.0}).get()[0].disabled = false;
+
+    if (sendCode) sendCode.css({opacity: 1.0}).get()[0].disabled = false;
   }
 
   $("#adgear_embed_code").val(value).css(css);
@@ -62,14 +76,14 @@ function adgearDynamicSiteChange($) {
   $(document).ready(function() {
     var dynamic = $("#adgear_site_is_dynamic").val() === "1";
 
-    $("#adgear_adspot_id, #adgear_single").change(function(ev) {
+    $(".adgear-meta .adgear_adspot_selector, .adgear-meta .adgear_single_selector").change(function(ev) {
       if (dynamic) return;
-      adgearStaticSiteChange($);
+      adgearStaticSiteChange($, $(ev.currentTarget).parents('.adgear-meta'));
     });
 
-    $("#adgear_type, #adgear_slugify, #adgear_format_id, #adgear_path, #adgear_single").change(function(ev) {
+    $(".adgear-meta .adgear_path_type_selector, .adgear-meta .adgear_slugify_selector, .adgear-meta .adgear_format_selector, .adgear-meta .adgear_path, .adgear-meta .adgear_single_selector").change(function(ev) {
       if (!dynamic) return;
-      adgearDynamicSiteChange($);
+      adgearDynamicSiteChange($, $(ev.currentTarget).parents('.adgear-meta'));
     });
 
     $("#adgear_send_embed_code_to_editor").click(function(ev) {
