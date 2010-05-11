@@ -52,12 +52,10 @@ function adgear_update_formats_csv($old_value, $new_value) {
 function adgear_update_site_embed_code($old_value, $new_value) {
   if ( $old_value == $new_value ) return;
 
-  $log = "";
   $sites = adgear_get_service_data( 'list_sites' );
 
   foreach( $sites["sites"] as $site ) {
     if ( $site["id"] == $new_value ) {
-
       update_option( 'adgear_site_embed_code', $site["embed_code"] );
 
       adgear_cleanup_obsolete_ad_spot_data();
@@ -310,6 +308,7 @@ if ( function_exists( 'curl_init' ) ) {
   </table>
   <p class="submit">
     <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+    <input type="submit" name="adgear_reload_adgear_data" class="button-secondary" value="<?php _e('Reload AdGear AdSpots and Formats') ?>" />
   </p>
 </form>
 <?php
@@ -319,6 +318,18 @@ if ( function_exists( 'curl_init' ) ) {
 <?php
 } /* curl_init function does not exist */
   echo "</div>";
+}
+
+/* TODO: Find the correct way to update settings which aren't part of the admin page.
+ * FIXME: Security hole. Intention isn't verified, but doing this is non-destructive. It does open a hole to a DoS attack.
+ * There's probably a better way to do this, but I haven't found it yet.
+ */
+if ( array_key_exists( 'adgear_reload_adgear_data',  $_POST ) ) {
+  /* This function reloads both the site and ad spot embed codes. */
+  adgear_update_site_embed_code( '', get_option( 'adgear_site_id' ) );
+
+  /* Reloads all formats from AdGear */
+  adgear_update_formats_csv( '', '' );
 }
 
 ?>
