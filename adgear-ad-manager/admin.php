@@ -286,6 +286,7 @@ if ( function_exists( 'curl_init' ) ) {
     } else {
 ?>
         <select name="adgear_site_id">
+          <option value=""><?php echo _e('Choose your site&hellip;'); ?></option>
 <?php
     foreach($sites["sites"] as $site) {
 ?>
