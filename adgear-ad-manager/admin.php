@@ -256,7 +256,9 @@ function adgear_settings_page() {
 ?>
 <div class="wrap">
 <h2>AdGear Settings</h2>
-
+<?php
+if ( function_exists( 'curl_init' ) ) {
+?>
 <form method="post" action="options.php">
   <?php settings_fields( 'adgear-settings-group' ); ?>
   <table class="form-table">
@@ -310,8 +312,13 @@ function adgear_settings_page() {
     <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
   </p>
 </form>
-</div>
 <?php
+} /* curl_init function exists */ else {
+?>
+    <p>Sorry, but cURL support is required for this plugin to work. Follow the instructions on <a href="http://www.php.net/manual/en/curl.installation.php">PHP: Installation</a> for details.</p>
+<?php
+} /* curl_init function does not exist */
+  echo "</div>";
 }
 
 ?>
