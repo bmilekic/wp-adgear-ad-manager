@@ -1,11 +1,11 @@
 <?php
 /*
- * Plugin Name: AdGear WP Plugin
- * Plugin URI: http://github.com/bloom/adgear-wp-plugin
+ * Plugin Name: AdGear Ad Manager
+ * Plugin URI: http://github.com/bloom/adgear-ad-manager
  * Description: Serve AdGear ads through your blog
- * Version: 0.1-alpha
+ * Version: 1.0-rc1
  * Author: Bloom Digital Platforms
- * Author URI: http://github.com/bloom/adgear-wp-plugin
+ * Author URI: http://github.com/bloom/adgear-ad-mananger
  * License: GPL2
  * */
 ?>
