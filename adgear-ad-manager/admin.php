@@ -70,7 +70,7 @@ function adgear_update_site_embed_code($old_value, $new_value) {
 
         foreach( $site["_urls"] as $service ) {
           if ( $service["name"] == "list_ad_spots" ) {
-            $ad_spots = adgear_api_call( $service["url"] );
+            $ad_spots = adgear_object_to_array( adgear_api_call( $service["url"] ) );
             $rows = array();
 
             foreach($ad_spots["ad_spots"] as $ad_spot) {
