@@ -4,12 +4,12 @@ directory "tmp"
 BASE = Pathname.new(File.expand_path(File.dirname(__FILE__)))
 
 task :clean do
-  rm_rf "tmp/adgear-wp-plugin.zip"
+  rm_rf "tmp/adgear-ad-manager.zip"
 end
 
 task :build => "tmp" do
   cmdline = "/usr/bin/zip -FS -1 -r --latest-time"
-  cmdline << " #{BASE + "tmp/adgear-wp-plugin.zip"}"
+  cmdline << " #{BASE + "tmp/adgear-ad-manager.zip"}"
   cmdline << " #{BASE.basename}"
   [BASE + "tmp/\\*", BASE + ".git/\\*"].each do |exclusion|
     cmdline << " --exclude #{exclusion.to_s.sub(BASE.parent.to_s + "/", "")}"
