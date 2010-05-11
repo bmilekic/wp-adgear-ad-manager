@@ -12,6 +12,7 @@ AdGear Ad Manager allows you to serve your ads without leaving your WordPress in
 
 == Installation ==
 
+1. Ensure you use PHP5, for the json_decode() function and the CURL module
 1. Upload `adgear-ad-manager.php` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Login to your AdGear account, click on your username to edit your settings, enable API access, and copy your API key
