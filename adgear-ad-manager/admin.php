@@ -22,6 +22,9 @@ add_action('admin_menu', 'adgear_create_menu');
 add_action('update_option_adgear_site_id', 'adgear_update_site_embed_code', 10, 2);
 add_action('update_option_adgear_api_root_url', 'adgear_update_formats_csv', 10, 2);
 
+add_action('admin_menu', 'adgear_admin_menu');
+add_filter('admin_print_scripts', 'adgear_admin_head');
+
 function adgear_cleanup_obsolete_ad_spot_data() {
   $adspots = adgear_ad_spots();
   foreach( $adspots as $adspot ) {
@@ -248,9 +251,6 @@ function adgear_admin_head () {
   $plugin_url = WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__));
   wp_enqueue_script('adgearAdmin', $plugin_url.'adgear-meta.js', array('jquery'), '1.0.0');
 }
-
-add_action('admin_menu', 'adgear_admin_menu');
-add_filter('admin_print_scripts', 'adgear_admin_head');
 
 function adgear_settings_page() {
 ?>

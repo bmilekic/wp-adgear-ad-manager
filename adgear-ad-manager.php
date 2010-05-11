@@ -35,11 +35,24 @@ function adgear_init() {
 	define( 'ADGEAR_PATH', dirname( __FILE__ ) );
 	define( 'ADGEAR_URL', get_bloginfo( 'wpurl' ) . '/wp-content/plugins/adgear-wp-plugin' );
 
+  register_deactivation_hook( 'adgear-ad-manager', 'adgear_deactivate' );
+
   if ( is_admin() ) {
     require_once(dirname(__FILE__) . "/adgear-ad-manager/admin.php");
   } else {
     add_action('wp_head', 'adgear_output_site_embed_tag');
   }
+}
+
+/* Fully remove all adgear settings from the options DB. */
+function adgear_deactivate() {
+  unregister_setting( 'adgear-settings-group', 'adgear_api_username' );
+  unregister_setting( 'adgear-settings-group', 'adgear_api_key' );
+  unregister_setting( 'adgear-settings-group', 'adgear_api_root_url' );
+  unregister_setting( 'adgear-settings-group', 'adgear_site_id' );
+
+  global $wpdb;
+  $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE 'adgear_%'");
 }
 
 function adgear_output_site_embed_tag() {
