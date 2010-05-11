@@ -308,7 +308,11 @@ if ( function_exists( 'curl_init' ) ) {
   </table>
   <p class="submit">
     <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+<?php
+  if ( get_option('adgear_api_username') && get_option('adgear_api_key') && get_option('adgear_api_root_url') ) {
+?>
     <input type="submit" name="adgear_reload_adgear_data" class="button-secondary" value="<?php _e('Reload AdGear AdSpots and Formats') ?>" />
+<?php } ?>
   </p>
 </form>
 <?php
