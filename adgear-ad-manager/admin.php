@@ -245,7 +245,8 @@ function adgear_meta_box_form() {
 }
 
 function adgear_admin_head () {
-  wp_enqueue_script('adgearAdmin', get_bloginfo('wpurl') . '/wp-content/plugins/adgear-ad-manager/adgear-meta.js', array('jquery'), '1.0.0');
+  $plugin_url = WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__));
+  wp_enqueue_script('adgearAdmin', $plugin_url.'adgear-meta.js', array('jquery'), '1.0.0');
 }
 
 add_action('admin_menu', 'adgear_admin_menu');
