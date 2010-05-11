@@ -57,8 +57,8 @@ function adgear_update_site_embed_code($old_value, $new_value) {
 
   foreach( $sites["sites"] as $site ) {
     if ( $site["id"] == $new_value ) {
+
       update_option( 'adgear_site_embed_code', $site["embed_code"] );
-      update_option( 'adgear_site_chip_key', $site["chip_key"] );
 
       adgear_cleanup_obsolete_ad_spot_data();
 
