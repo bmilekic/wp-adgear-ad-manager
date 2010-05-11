@@ -14,6 +14,8 @@ task :build => "tmp" do
   [BASE + "tmp/\\*", BASE + ".git/\\*"].each do |exclusion|
     cmdline << " --exclude #{exclusion.to_s.sub(BASE.parent.to_s + "/", "")}"
   end
+  cmdline << " --exclude .DS_Store"
+  cmdline << " --exclude .gitignore"
 
   chdir(BASE + "..") do
     sh cmdline
