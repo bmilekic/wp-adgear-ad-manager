@@ -263,19 +263,19 @@ if ( function_exists( 'curl_init' ) ) {
   <?php settings_fields( 'adgear-settings-group' ); ?>
   <table class="form-table">
     <tr valign="top">
-      <th scope="row">API Username</th>
+      <th scope="row"><?php echo _e('API Username'); ?></th>
       <td><input type="text" name="adgear_api_username" value="<?php echo get_option('adgear_api_username', ''); ?>" /></td>
     </tr>
     <tr valign="top">
-      <th scope="row">API Digest Key</th>
+      <th scope="row"><?php echo _e('API Digest Key'); ?></th>
       <td><input type="text" name="adgear_api_key" size="68" value="<?php echo get_option('adgear_api_key', ''); ?>" /></td>
     </tr>
     <tr valign="top">
-      <th scope="row">API Root URL</th>
+      <th scope="row"><?php echo _e('API Root URL'); ?></th>
       <td><input type="text" name="adgear_api_root_url" size="40" value="<?php echo get_option('adgear_api_root_url', 'http://api.admin.adgear.com/'); ?>" /></td>
     </tr>
     <tr valign="top">
-      <th scope="row">AdGear Site</th>
+      <th scope="row"><?php echo _e('AdGear Site'); ?></th>
       <td>
 <?php
   if ( get_option('adgear_api_username') && get_option('adgear_api_key') && get_option('adgear_api_root_url') ) {
@@ -315,7 +315,7 @@ if ( function_exists( 'curl_init' ) ) {
 <?php
 } /* curl_init function exists */ else {
 ?>
-    <p>Sorry, but cURL support is required for this plugin to work. Follow the instructions on <a href="http://www.php.net/manual/en/curl.installation.php">PHP: Installation</a> for details.</p>
+    <p><?php echo _e('Sorry, but cURL support is required for this plugin to work. Follow the instructions on <a href="http://www.php.net/manual/en/curl.installation.php">PHP: Installation</a> for details.'); ?></p>
 <?php
 } /* curl_init function does not exist */
   echo "</div>";
