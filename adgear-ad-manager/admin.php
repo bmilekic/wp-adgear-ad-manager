@@ -310,9 +310,14 @@ if ( function_exists( 'curl_init' ) ) {
     <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
 <?php
   if ( get_option('adgear_api_username') && get_option('adgear_api_key') && get_option('adgear_api_root_url') ) {
+    $sites = adgear_get_service_data( 'list_sites' );
+    if ( !empty( $sites ) ) {
 ?>
     <input type="submit" name="adgear_reload_adgear_data" class="button-secondary" value="<?php _e('Reload AdGear AdSpots and Formats') ?>" />
-<?php } ?>
+<?php
+    }
+  }
+?>
   </p>
 </form>
 <?php
