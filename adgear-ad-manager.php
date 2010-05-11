@@ -2,7 +2,7 @@
 /*
  * Plugin Name: AdGear WP Plugin
  * Plugin URI: http://github.com/bloom/adgear-wp-plugin
- * Description: Server AdGear ads through your blog
+ * Description: Serve AdGear ads through your blog
  * Version: 0.1-alpha
  * Author: Bloom Digital Platforms
  * Author URI: http://github.com/bloom/adgear-wp-plugin
