@@ -320,6 +320,11 @@ if ( function_exists( 'curl_init' ) ) {
   }
 ?>
   </p>
+<?php
+  if ( get_option('adgear_api_username') && get_option('adgear_api_key') && get_option('adgear_api_root_url') && count( adgear_formats() ) == 0 ) {
+    echo "<p>". _e('Your database does not contain any formats. Use the <em>Reload AdGear AdSpots and Formats</em> button above to prime your database.') ."</p>";
+  }
+?>
   <p><?php echo _e("To remove this plugin and all it's configuration, visit the <a href='". get_bloginfo( 'wpurl' )."/wp-admin/plugins.php'>plugins</a> page."); ?></p>
 </form>
 <?php
