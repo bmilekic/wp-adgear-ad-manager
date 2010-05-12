@@ -311,7 +311,7 @@ if ( function_exists( 'curl_init' ) ) {
   <p class="submit">
     <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
 <?php
-  if ( get_option('adgear_api_username') && get_option('adgear_api_key') && get_option('adgear_api_root_url') ) {
+  if ( get_option( 'adgear_site_id' ) && get_option( 'adgear_api_username' ) && get_option( 'adgear_api_key' ) && get_option( 'adgear_api_root_url' ) ) {
     $sites = adgear_get_service_data( 'list_sites' );
     if ( !empty( $sites ) ) {
 ?>
@@ -322,7 +322,7 @@ if ( function_exists( 'curl_init' ) ) {
 ?>
   </p>
 <?php
-  if ( get_option('adgear_api_username') && get_option('adgear_api_key') && get_option('adgear_api_root_url') && count( adgear_formats() ) == 0 ) {
+  if ( get_option( 'adgear_site_id' ) && get_option( 'adgear_api_username' ) && get_option( 'adgear_api_key' ) && get_option( 'adgear_api_root_url' ) && count( adgear_formats() ) == 0 ) {
     echo "<p>". _e('Your database does not contain any formats. Use the <em>Reload AdGear AdSpots and Formats</em> button above to prime your database.') ."</p>";
   }
 ?>
