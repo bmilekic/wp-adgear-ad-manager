@@ -254,7 +254,7 @@ function adgear_settings_page() {
   $plugin_url = WP_PLUGIN_URL.'/'.str_replace( basename( __FILE__ ), "", plugin_basename( __FILE__ ) );
 ?>
 <div class="wrap">
-<h2>AdGear <img height="40" alt="" src="<?php echo $plugin_url.'/../adgear-logo.png'; ?>"/> Settings</h2>
+<h2>Settings for AdGear <img height="40" alt="" src="<?php echo $plugin_url.'/../adgear-logo.png'; ?>"/></h2>
 <?php
 if ( function_exists( 'curl_init' ) ) {
 ?>
