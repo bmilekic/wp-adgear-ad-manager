@@ -3,7 +3,7 @@
  * Plugin Name: AdGear Ad Manager
  * Plugin URI: http://github.com/bloom/adgear-ad-manager
  * Description: Serve AdGear ads through your blog
- * Version: 1.0-rc1
+ * Version: 1.0-rc2
  * Author: Bloom Digital Platforms
  * Author URI: http://github.com/bloom/adgear-ad-mananger
  * License: GPL2
