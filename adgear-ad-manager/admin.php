@@ -20,7 +20,7 @@ error_reporting( E_ALL );
 
 add_action('admin_menu', 'adgear_create_menu');
 add_action('update_option_adgear_site_id', 'adgear_update_site_embed_code', 10, 2);
-add_action('update_option_adgear_api_root_url', 'adgear_update_formats_csv', 10, 2);
+add_action('update_option_adgear_site_id', 'adgear_update_formats_csv', 10, 2);
 
 add_action('admin_menu', 'adgear_admin_menu');
 add_filter('admin_print_scripts', 'adgear_admin_head');
