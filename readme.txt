@@ -13,27 +13,25 @@ AdGear Ad Manager allows you to serve your ads without leaving your WordPress in
 == Installation ==
 
 1. Ensure you use PHP5, for the json_decode() function and the CURL module
-1. Upload `adgear-ad-manager.php` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Login to your AdGear account, click on your username to edit your settings, enable API access, and copy your API key
-1. In AdGear, create a website for your WordPress blog
-1. Back in WordPress, go to Settings, AdGear Settings, then set your username, paste your API key, and set the root API endpoint (should be http://api.admin.adgear.com/, which is filled in by default)
-1. Save the settings, then choose your site from the dropdown
+2. Login to your AdGear account, click on your username to edit your settings, enable API access, and copy your API key
+3. Create a website for your WordPress blog
+4. Upload the ZIP file through WordPress' Plugins UI
+5. Activate the plugin
+6. Go to Settings, AdGear Settings, then set your username, paste your API key, and set the root API endpoint (should be http://api.admin.adgear.com/, which is filled in by default)
+7. Save the settings, then choose your site from the dropdown
+8. You're done!
 
 === Adding an Ad in the sidebar ===
 
-You have two choices: you can use Shortcodes or straight PHP from your template. If you use Shortcodes, you have to enable them for all plugins, globally. There is a slight security risk associated with this: if a malicious plugin used a Shortcode without your knowledge in a sidebar, the Shortcode would be interpreted, and might do something.
+Use the AdGear Widget to put an ad. Click on Appearance, Widgets.
 
 === Using the Shortcode tag ===
 
-Anywhere in the body of your post or in widgets (if Shortcodes are enabled in sidebars), you may use the AdGear Shortcode:
+Anywhere in the body of your post, you may use the AdGear Shortcode:
 
-    [adgear_ad name=in-article]
     [adgear_ad id=123]
 
-These two Shortcodes will generate so-called Static AdSpot Tags. If your ad spot's name includes a space, you will need to enclose the name in double quotes:
-
-    [adgear_ad name="Front Page"]
+This Shortcode will generate so-called Static AdSpot Tags.
 
 Sometimes you want to show one set of AdSpots on single post pages vs list pages. You can do so with the `single` option:
 
@@ -48,20 +46,17 @@ Dynamic AdSpots are used when you want AdGear to learn about your site's hierarc
 
 The Shortcode API is very similar to the Static AdSpot tags:
 
-    [adgear_ad format=banner single=yes path=by_categories]
-    [adgear_ad format=skyscraper single=yes path=by_tags]
-    [adgear_ad format=leaderboard single=no]
-    [adgear_ad format=half-button single=no]
+    [adgear_ad format=3 single=yes path=by_categories]
+    [adgear_ad format=7 single=yes path=by_tags]
+    [adgear_ad format=9 single=no]
+    [adgear_ad format=4 single=no]
 
 == Frequently Asked Questions ==
 
-= A question that someone might have =
+= How do I guess the format IDs? =
 
-An answer to that question.
+Use the META box at the bottom of the post form to build a Shortcode for you.
 
-= What about foo bar? =
-
-Answer to foo bar dilemma.
 
 == Screenshots ==
 
