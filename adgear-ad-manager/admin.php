@@ -253,7 +253,7 @@ function adgear_admin_head () {
 function adgear_settings_page() {
 ?>
 <div class="wrap">
-<h2>AdGear Settings</h2>
+<h2><img src="http://www.adgear.com/images/logo.png"/> Settings</h2>
 <?php
 if ( function_exists( 'curl_init' ) ) {
 ?>
