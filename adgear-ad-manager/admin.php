@@ -246,14 +246,15 @@ function adgear_meta_box_form() {
 }
 
 function adgear_admin_head () {
-  $plugin_url = WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),"",plugin_basename(__FILE__));
+  $plugin_url = WP_PLUGIN_URL.'/'.str_replace( basename( __FILE__ ), "", plugin_basename( __FILE__ ) );
   wp_enqueue_script('adgearAdmin', $plugin_url.'adgear-meta.js', array('jquery'), '1.0.0');
 }
 
 function adgear_settings_page() {
+  $plugin_url = WP_PLUGIN_URL.'/'.str_replace( basename( __FILE__ ), "", plugin_basename( __FILE__ ) );
 ?>
 <div class="wrap">
-<h2><img src="http://www.adgear.com/images/logo.png"/> Settings</h2>
+<h2>AdGear <img height="40" alt="" src="<?php echo $plugin_url.'/../adgear-logo.png'; ?>"/> Settings</h2>
 <?php
 if ( function_exists( 'curl_init' ) ) {
 ?>
