@@ -320,6 +320,7 @@ if ( function_exists( 'curl_init' ) ) {
   }
 ?>
   </p>
+  <p><?php echo _e("To remove this plugin and all it's configuration, visit the <a href='". get_bloginfo( 'wpurl' )."/wp-admin/plugins.php'>plugins</a> page."); ?></p>
 </form>
 <?php
 } /* curl_init function exists */ else {
