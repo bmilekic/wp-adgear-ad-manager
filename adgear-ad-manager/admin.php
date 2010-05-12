@@ -335,13 +335,11 @@ if ( function_exists( 'curl_init' ) ) {
  * There's probably a better way to do this, but I haven't found it yet.
  */
 if ( array_key_exists( 'adgear_reload_adgear_data',  $_POST ) ) {
-  if ( is_admin() ) {
-    /* This function reloads both the site and ad spot embed codes. */
-    adgear_update_site_embed_code( '', get_option( 'adgear_site_id' ) );
+  /* This function reloads both the site and ad spot embed codes. */
+  adgear_update_site_embed_code( '', get_option( 'adgear_site_id' ) );
 
-    /* Reloads all formats from AdGear */
-    adgear_update_formats_csv( '', '' );
-  }
+  /* Reloads all formats from AdGear */
+  adgear_update_formats_csv( '', '' );
 }
 
 ?>
