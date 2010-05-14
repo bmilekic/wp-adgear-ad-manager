@@ -76,14 +76,14 @@ function adgearDynamicSiteChange($, root) {
   $(document).ready(function() {
     var dynamic = $("#adgear_site_is_dynamic").val() === "1";
 
-    $(".adgear-meta .adgear_adspot_selector, .adgear-meta .adgear_single_selector").change(function(ev) {
+    $(".adgear-meta .adgear_adspot_selector, .adgear-meta .adgear_single_selector").live("change", function(ev) {
       if (dynamic) return;
-      adgearStaticSiteChange($, $(ev.currentTarget).parents('.adgear-meta'));
+      adgearStaticSiteChange($, $(ev.target).parents('.adgear-meta'));
     });
 
-    $(".adgear-meta .adgear_path_type_selector, .adgear-meta .adgear_slugify_selector, .adgear-meta .adgear_format_selector, .adgear-meta .adgear_path, .adgear-meta .adgear_single_selector").change(function(ev) {
+    $(".adgear-meta .adgear_path_type_selector, .adgear-meta .adgear_slugify_selector, .adgear-meta .adgear_format_selector, .adgear-meta .adgear_path, .adgear-meta .adgear_single_selector").live("change", function(ev) {
       if (!dynamic) return;
-      adgearDynamicSiteChange($, $(ev.currentTarget).parents('.adgear-meta'));
+      adgearDynamicSiteChange($, $(ev.target).parents('.adgear-meta'));
     });
 
     $("#adgear_send_embed_code_to_editor").click(function(ev) {
