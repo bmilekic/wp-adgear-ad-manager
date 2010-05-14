@@ -51,6 +51,15 @@ The Shortcode API is very similar to the Static AdSpot tags:
     [adgear_ad format=9 single=no]
     [adgear_ad format=4 single=no]
 
+=== Low-level access for use in themes ===
+
+You can call the `adgear_ad()` PHP function to generate the correct embed tag at a specific point in your layout. `adgear_ad()` can be called in one of 2 modes:
+
+  adgear_ad($adspot_id);
+  adgear_ad($format_id, $path)
+
+`$path` must be an array of strings. There are no convenience functions to generate using tags or such. Even the single vs list page is not taken care of.
+
 == Frequently Asked Questions ==
 
 = How do I guess the format IDs? =
