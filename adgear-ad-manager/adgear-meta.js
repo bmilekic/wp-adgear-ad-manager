@@ -6,6 +6,7 @@ function adgearStaticSiteChange($, root) {
   var option = $(select.options[select.selectedIndex]);
 
   var sendCode = $("#adgear_send_embed_code_to_editor");
+  if (sendCode.length === 0) sendCode = null;
 
   var value, css;
   if (adspot.val() === "") {
@@ -53,6 +54,7 @@ function adgearDynamicSiteChange($, root) {
   }
 
   var sendCode = $("#adgear_send_embed_code_to_editor");
+  if (sendCode.length === 0) sendCode = null;
 
   var css, value;
   if (format_id === "") {
