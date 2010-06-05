@@ -72,6 +72,9 @@ function adgear_ad() {
   if ( adgear_is_dynamic_site() ) {
     $format = func_get_arg(0);
     $path   = func_get_arg(1);
+    echo "<pre><code>";
+    var_dump($path);
+    echo "</code></pre>";
 
     // Switch on $format
     $embed_code = get_option( 'adgear_site_universal_embed_code' );
@@ -139,11 +142,14 @@ function adgear_ad_spots() {
 
 function adgear_ad_handler($atts) {
   extract(shortcode_atts(array(
-    "id"      => "",
-    "format"  => "",
-    "path"    => "",
-    "slugify" => "",
-    "single"  => "",
+    "id"          => "",
+    "format"      => "",
+    "path"        => "",
+    "slugify"     => "",
+    "single"      => "",
+    "path_pre"    => "",
+    "path_middle" => "",
+    "path_post"   => "",
   ), $atts));
 
   // If this tag should render only on single posts page, and we're not on a single post, abort
@@ -152,54 +158,65 @@ function adgear_ad_handler($atts) {
   // If this tag should render only on listing pages, and we're on a single post, abort
   if ($single == 'no'  &&  is_single()) return "";
 
-//  echo "<pre><code>";
-//  var_dump(array(
-//    "id"              => $id,
-//    "format"          => $format,
-//    "path"            => $path,
-//    "slugify"         => $slugify,
-//    "single"          => $single,
-//    "site_is_dynamic" => adgear_is_dynamic_site(),
-//  ));
-//  echo "</code></pre>";
+  echo "<pre><code>";
+  var_dump(array(
+    "id"              => $id,
+    "format"          => $format,
+    "path"            => $path,
+    "path_pre"        => $path_pre,
+    "path_middle"     => $path_middle,
+    "path_post"       => $path_post,
+    "slugify"         => $slugify,
+    "single"          => $single,
+    "site_is_dynamic" => adgear_is_dynamic_site(),
+  ));
+  echo "</code></pre>";
 
   if ( !adgear_is_dynamic_site() && $id ) {
     return adgear_ad( $id );
   } else if ( adgear_is_dynamic_site() && $format && $path ) {
-    $pathname = array();
+    $pathname = explode( ',', $path_pre);
 
     switch( $path ) {
     case "by_categories":
       global $post;
       $postcats = get_the_category($post->ID);
+      $cats = array();
       if ( $postcats ) {
         foreach( $postcats as $cat ) {
-          $pathname[] = $cat->cat_name;
+          $cats[] = $cat->cat_name;
         }
       }
-      sort( $pathname );
+      sort( $cats );
+      $pathname = array_merge( $pathname, $cats );
       break;
 
     case "by_tags":
       global $post;
       $posttags = get_the_tags($post->ID);
+      $tags = array();
       if ( $posttags ) {
         foreach( $posttags as $tag ) {
-          $pathname[] = $tag->name;
+          $tags[] = $tag->name;
         }
       }
-      sort( $pathname );
+      sort( $tags );
+      $pathname = array_merge( $pathname, $tags );
       break;
 
     default:
-      $pathname = explode( ',', $path );
+      $pathname = array_merge( $pathname, explode( ',', $path ) );
       break;
     }
+
+    $pathname = array_merge( $pathname, explode( ',', $path_middle ) );
 
     if ( $slugify == "1" || $slugify == "yes" ) {
       $post = get_post( get_the_ID() );
       $pathname[] = $post->post_name;
     }
+
+    $pathname = array_merge( $pathname, explode( ',', $path_post ) );
 
     return adgear_ad( $format, $pathname);
   } else if ( adgear_is_dynamic_site() && $format ) {
@@ -256,6 +273,27 @@ function adgear_path_type_selector_ui($args) {
   </select>
   <br/>
   <input class="adgear_path" name="<?php echo $path_name; ?>" id="<?php echo $path_id; ?>" type="text" size="40" style="width:95%<?php if ( $selected != "path" ) { echo ';display:none'; } ?>" value="<?php echo $path_selected; ?>"/>
+<?php
+}
+
+function adgear_path_pre_ui($args) {
+  extract($args);
+?>
+  <input class="adgear_path_pre" type="text" name="<?php echo $name; ?>" id="<?php echo $id; ?>" value="<?php echo $value; ?>"/>
+<?php
+}
+
+function adgear_path_middle_ui($args) {
+  extract($args);
+?>
+  <input class="adgear_path_middle" type="text" name="<?php echo $name; ?>" id="<?php echo $id; ?>" value="<?php echo $value; ?>"/>
+<?php
+}
+
+function adgear_path_post_ui($args) {
+  extract($args);
+?>
+  <input class="adgear_path_post" type="text" name="<?php echo $name; ?>" id="<?php echo $id; ?>" value="<?php echo $value; ?>"/>
 <?php
 }
 
@@ -351,7 +389,7 @@ class AdGearAdWidget extends WP_Widget {
     $instance = $old_instance;
 
     if ( adgear_is_dynamic_site() ) {
-      $keys = array( 'format_id', 'path_type', 'path', 'slugify', 'single' );
+      $keys = array( 'format_id', 'path_type', 'path_pre', 'path', 'path_middle', 'slugify', 'path_post', 'single' );
     } else {
       $keys = array( 'adspot_id', 'single' );
     }
@@ -375,36 +413,57 @@ class AdGearAdWidget extends WP_Widget {
 
     echo '<div class="adgear-meta" style="margin:0;padding:0">';
     if ( adgear_is_dynamic_site() ) {
-      $format_id = strip_tags($instance['format_id']);
-      $path_type = strip_tags($instance['path_type']);
-      $path      = strip_tags($instance['path']);
-      $slugify   = strip_tags($instance['slugify']);
+      $format_id   = strip_tags($instance['format_id']);
+      $path_type   = strip_tags($instance['path_type']);
+      $path        = strip_tags($instance['path']);
+      $slugify     = strip_tags($instance['slugify']);
+
+      /* Backwards compatibility: don't show ugly error messages when the keys don't exist */
+      if ( array_key_exists( 'path_pre', $instance ) ) {
+        $path_pre    = strip_tags($instance['path_pre']);
+        $path_middle = strip_tags($instance['path_middle']);
+        $path_post   = strip_tags($instance['path_post']);
+      } else {
+        $path_pre = $path_middle = $path_post = "";
+      }
 ?>
       <p>
-        <label for="<?php echo $this->get_field_id('format_id'); ?>">Format:</label>
+      <label for="<?php echo $this->get_field_id('format_id'); ?>"><?php _e('Ad Format:'); ?></label>
         <?php adgear_format_selector_ui( array( 'id' => $this->get_field_id('format_id'), 'name' => $this->get_field_name('format_id'), 'selected' => $format_id, 'include_blank' => true )); ?>
       </p>
       <p>
-        <label for="<?php echo $this->get_field_id('path_type'); ?>">Path type:</label>
+        <label for="<?php echo $this->get_field_id('path_pre'); ?>"><?php _e('Path before:'); ?></label>
+        <?php adgear_path_pre_ui( array( 'id' => $this->get_field_id('path_pre'), 'name' => $this->get_field_name('path_pre'), 'value' => $path_pre ) ); ?>
+      </p>
+      <p>
+        <label for="<?php echo $this->get_field_id('path_type'); ?>"><?php _e('Path type:'); ?></label>
         <?php adgear_path_type_selector_ui( array( 'id' => $this->get_field_id('path_type'), 'name' => $this->get_field_name('path_type'), 'selected' => $path_type, 'path_id' => $this->get_field_id('path'), 'path_name' => $this->get_field_name('path'), 'path_selected' => $path )); ?>
       </p>
       <p>
-        <label for="<?php echo $this->get_field_id('slugify'); ?>">Use post's slug in path:</label>
+        <label for="<?php echo $this->get_field_id('path_middle'); ?>"><?php _e('Path middle:'); ?></label>
+        <?php adgear_path_middle_ui( array( 'id' => $this->get_field_id('path_middle'), 'name' => $this->get_field_name('path_middle'), 'value' => $path_middle ) ); ?>
+      </p>
+      <p>
+        <label for="<?php echo $this->get_field_id('slugify'); ?>"><?php _e('Use post\'s slug in path:'); ?></label>
         <?php adgear_slugify_selector_ui( array( 'id' => $this->get_field_id('slugify'), 'name' => $this->get_field_name('slugify'), 'selected' => $slugify )); ?>
+      </p>
+      <p>
+        <label for="<?php echo $this->get_field_id('path_post'); ?>"><?php _e('Path after:'); ?></label>
+        <?php adgear_path_post_ui( array( 'id' => $this->get_field_id('path_post'), 'name' => $this->get_field_name('path_post'), 'value' => $path_post ) ); ?>
       </p>
 <?php
     } else {
       $adspot_id = strip_tags($instance['adspot_id']);
 ?>
       <p>
-        <label for="<?php echo $this->get_field_id('adspot_id'); ?>">Ad Spot:</label>
+        <label for="<?php echo $this->get_field_id('adspot_id'); ?>"><?php _e('Ad spot:'); ?></label>
         <?php adgear_adspot_selector_ui( array( 'id' => $this->get_field_id('adspot_id'), 'name' => $this->get_field_name('adspot_id'), 'selected' => $adspot_id )); ?>
       </p>
 <?php
     }
 ?>
       <p>
-        <label for="<?php $this->get_field_id('single'); ?>">When to show this ad:</label>
+        <label for="<?php $this->get_field_id('single'); ?>"><?php _e('When to show this ad:'); ?></label>
         <?php adgear_single_selector_ui( array( 'id' => $this->get_field_id('single'), 'name' => $this->get_field_name('single'), 'selected' => $single)) ?>
       </p>
       <div style="display:none;margin:0;padding:0">

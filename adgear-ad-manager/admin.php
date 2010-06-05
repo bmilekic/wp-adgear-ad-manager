@@ -197,15 +197,33 @@ function adgear_meta_box_form() {
                 </td>
             </tr>
             <tr valign="top">
+              <th scope="row"><label for="adgear_path_pre"><?php _e('Path before:')?></label></th>
+              <td>
+                <?php adgear_path_pre_ui( array( 'id' => 'adgear_path_pre', 'name' => 'adgear[path_pre]', 'value' => '' ) ); ?>
+              </td>
+            </tr>
+            <tr valign="top">
               <th scope="row"><label for="adgear_type"><?php _e('Path type:')?></label></th>
               <td>
                 <?php adgear_path_type_selector_ui( array( 'id' => 'adgear_type', 'name' => 'adgear[type]', 'selected' => 'categories', 'path_id' => 'adgear_path', 'path_name' => 'adgear[path]', 'path_selected' => '' ) ); ?>
               </td>
             </tr>
             <tr valign="top">
+              <th scope="row"><label for="adgear_path_middle"><?php _e('Path middle:')?></label></th>
+              <td>
+                <?php adgear_path_middle_ui( array( 'id' => 'adgear_path_middle', 'name' => 'adgear[path_middle]', 'value' => '' ) ); ?>
+              </td>
+            </tr>
+            <tr valign="top">
               <th scope="row"><label for="adgear_slugify"><?php _e('Use post\'s slug in path:')?></label></th>
               <td>
                 <?php adgear_slugify_selector_ui( array( 'id' => 'adgear_slugify', 'name' => 'adgear[slugify]', 'selected' => 'yes') ); ?>
+              </td>
+            </tr>
+            <tr valign="top">
+              <th scope="row"><label for="adgear_path_post"><?php _e('Path after:')?></label></th>
+              <td>
+                <?php adgear_path_post_ui( array( 'id' => 'adgear_path_post', 'name' => 'adgear[path_post]', 'value' => '' ) ); ?>
               </td>
             </tr>
 <?php } /* dynamic site */ else /* static site */ { ?>
@@ -225,7 +243,7 @@ function adgear_meta_box_form() {
           <tr valign="top">
             <th scope="row"><label for="adgear_embed_code"><?php _e('Embed Code:')?></label></th>
             <td>
-            <input type="text" id="adgear_embed_code" name="adgear[embed_code]" size="40" style="width:95%;" autocomplete="off" />
+              <input type="text" id="adgear_embed_code" name="adgear[embed_code]" size="40" style="width:95%;" autocomplete="off" />
             </td>
           </tr>
         </table>

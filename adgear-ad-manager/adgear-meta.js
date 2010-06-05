@@ -30,6 +30,9 @@ function adgearDynamicSiteChange($, root) {
   var slugify    = root.find(".adgear_slugify_selector").val();
   var path       = root.find(".adgear_path").val();
   var format_id  = root.find(".adgear_format_selector").val();
+  var pathPre    = root.find(".adgear_path_pre").val();
+  var pathMiddle = root.find(".adgear_path_middle").val();
+  var pathPost   = root.find(".adgear_path_post").val();
   var pathType   = root.find(".adgear_path_type_selector").val();
   var single     = root.find(".adgear_single_selector").val();
   var format     = root.find(".adgear_format_selector").get()[0];
@@ -63,7 +66,21 @@ function adgearDynamicSiteChange($, root) {
 
     if (sendCode) sendCode.css({opacity: 0.5}).get()[0].disabled = true;
   } else {
-    value = "[adgear_ad format=" + format_id + " name=\"" + formatName + "\" single=" + single + " slugify=" + slugify + " path=" + pathParam + "]";
+    var tagCode = {format  : format_id,
+                   name    : formatName,
+                   single  : single,
+                   slugify : slugify,
+                   path    : pathParam,
+                   pre     : pathPre,
+                   middle  : pathMiddle,
+                   post    : pathPost};
+
+    value = "[adgear_ad";
+    for(var key in tagCode) {
+      value += " " + key + '="' + tagCode[key] + '"';
+    }
+    value += "]";
+
     css   = {"color": "black", "font-style": "normal"};
 
     if (sendCode) sendCode.css({opacity: 1.0}).get()[0].disabled = false;
@@ -81,7 +98,7 @@ function adgearDynamicSiteChange($, root) {
       adgearStaticSiteChange($, $(ev.target).parents('.adgear-meta'));
     });
 
-    $(".adgear-meta .adgear_path_type_selector, .adgear-meta .adgear_slugify_selector, .adgear-meta .adgear_format_selector, .adgear-meta .adgear_path, .adgear-meta .adgear_single_selector").live("change", function(ev) {
+    $(".adgear-meta .adgear_path_type_selector, .adgear-meta .adgear_slugify_selector, .adgear-meta .adgear_format_selector, .adgear-meta .adgear_path, .adgear-meta .adgear_single_selector, .adgear-meta .adgear_path_pre, .adgear-meta .adgear_path_middle, .adgear-meta .adgear_path_post").live("change", function(ev) {
       if (!dynamic) return;
       adgearDynamicSiteChange($, $(ev.target).parents('.adgear-meta'));
     });
