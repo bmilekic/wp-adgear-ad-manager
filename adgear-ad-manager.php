@@ -66,7 +66,7 @@ function adgear_warning_css_properties() {
   return "background:#c33;margin:inherited 2em;padding:.5em;color:#000;";
 }
 
-function adgear_ad() {
+function adgear_ad_internal() {
   echo "<!-- adgear adspot embed tag -->\n";
   $embed_code = "";
   if ( adgear_is_dynamic_site() ) {
@@ -137,7 +137,7 @@ function adgear_ad_spots() {
   return $adspots;
 }
 
-function adgear_ad_handler($atts) {
+function adgear_ad($atts) {
   extract(shortcode_atts(array(
     "id"          => "",
     "format"      => "",
@@ -170,7 +170,7 @@ function adgear_ad_handler($atts) {
   // echo "</code></pre>";
 
   if ( !adgear_is_dynamic_site() && $id ) {
-    return adgear_ad( $id );
+    return adgear_ad_internal( $id );
   } else if ( adgear_is_dynamic_site() && $format && $path ) {
     $pathname = explode( ',', $path_pre);
 
@@ -215,14 +215,14 @@ function adgear_ad_handler($atts) {
 
     $pathname = array_merge( $pathname, explode( ',', $path_post ) );
 
-    return adgear_ad( $format, $pathname);
+    return adgear_ad_internal( $format, $pathname);
   } else if ( adgear_is_dynamic_site() && $format ) {
-    return adgear_ad( $format, array() );
+    return adgear_ad_internal( $format, array() );
   } else {
     return "<p style='".adgear_warning_css_properties()."'><strong>WARNING</strong>: AdGear Ad Manager did not understand the embed code. This would be because you used a dynamic embed code on a dynamic site, or the reverse.</p>";
   }
 }
-add_shortcode('adgear_ad', 'adgear_ad_handler');
+add_shortcode('adgear_ad', 'adgear_ad');
 
 function adgear_adspot_selector_ui($args) {
   extract($args);
@@ -374,9 +374,9 @@ class AdGearAdWidget extends WP_Widget {
         $pathname[] = $post->post_name;
       }
 
-      echo adgear_ad( $instance['format_id'], $pathname );
+      echo adgear_ad_internal( $instance['format_id'], $pathname );
     } else {
-      echo adgear_ad( $instance['adspot_id'] );
+      echo adgear_ad_internal( $instance['adspot_id'] );
     }
 
     echo $after_widget;
