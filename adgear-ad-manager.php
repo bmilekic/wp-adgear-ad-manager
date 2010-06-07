@@ -72,9 +72,6 @@ function adgear_ad() {
   if ( adgear_is_dynamic_site() ) {
     $format = func_get_arg(0);
     $path   = func_get_arg(1);
-    echo "<pre><code>";
-    var_dump($path);
-    echo "</code></pre>";
 
     // Switch on $format
     $embed_code = get_option( 'adgear_site_universal_embed_code' );
@@ -158,19 +155,19 @@ function adgear_ad_handler($atts) {
   // If this tag should render only on listing pages, and we're on a single post, abort
   if ($single == 'no'  &&  is_single()) return "";
 
-  echo "<pre><code>";
-  var_dump(array(
-    "id"              => $id,
-    "format"          => $format,
-    "path"            => $path,
-    "path_pre"        => $path_pre,
-    "path_middle"     => $path_middle,
-    "path_post"       => $path_post,
-    "slugify"         => $slugify,
-    "single"          => $single,
-    "site_is_dynamic" => adgear_is_dynamic_site(),
-  ));
-  echo "</code></pre>";
+  // echo "<pre><code>";
+  // var_dump(array(
+  //   "id"              => $id,
+  //   "format"          => $format,
+  //   "path"            => $path,
+  //   "path_pre"        => $path_pre,
+  //   "path_middle"     => $path_middle,
+  //   "path_post"       => $path_post,
+  //   "slugify"         => $slugify,
+  //   "single"          => $single,
+  //   "site_is_dynamic" => adgear_is_dynamic_site(),
+  // ));
+  // echo "</code></pre>";
 
   if ( !adgear_is_dynamic_site() && $id ) {
     return adgear_ad( $id );
