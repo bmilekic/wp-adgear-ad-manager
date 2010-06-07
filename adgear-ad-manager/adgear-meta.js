@@ -41,16 +41,23 @@ function adgearDynamicSiteChange($, root) {
 
   switch(pathType) {
     case 'categories':
+    if (! root.find(".adgear_toggle_advanced")[0].checked) {
+      root.find(".adgear_example").hide();
+    }
     root.find(".adgear_path").hide();
     pathParam = "by_categories";
     break;
 
     case 'tags':
+    if (! root.find(".adgear_toggle_advanced")[0].checked) {
+      root.find(".adgear_example").hide();
+    }
     root.find(".adgear_path").hide();
     pathParam = "by_tags";
     break;
 
     default:
+    root.find(".adgear_example").show();
     root.find(".adgear_path").show();
     pathParam = '"' + path + '"';
     break;
@@ -107,6 +114,21 @@ function adgearDynamicSiteChange($, root) {
       var embedCode = $("#adgear_embed_code").val();
       window.send_to_editor(embedCode);
       return false;
+    });
+
+    $(".adgear_toggle_advanced").live("change", function() {
+      var root = $(this).closest(".adgear-meta");
+      var rows = root.find(".adgear_advanced");
+      if ($(this)[0].checked) {
+        rows.show();
+        root.find(".adgear_example").show();
+      } else {
+        rows.hide();
+        rows.find("input").val("");
+        if (root.find(".adgear_path_type_selector").val() !== "path") {
+          root.find(".adgear_example").hide();
+        }
+      }
     });
   });
 })(jQuery);

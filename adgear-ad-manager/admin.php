@@ -196,7 +196,7 @@ function adgear_meta_box_form() {
                   <?php adgear_format_selector_ui( array( 'id' => 'adgear_format_id', 'name' => 'adgear[format_id]', 'selected' => '', 'include_blank' => true )); ?>
                 </td>
             </tr>
-            <tr valign="top">
+            <tr valign="top" class="adgear_advanced" style="display:none">
               <th scope="row"><label for="adgear_path_pre"><?php _e('Path before:')?></label></th>
               <td>
                 <?php adgear_path_pre_ui( array( 'id' => 'adgear_path_pre', 'name' => 'adgear[path_pre]', 'value' => '' ) ); ?>
@@ -208,7 +208,7 @@ function adgear_meta_box_form() {
                 <?php adgear_path_type_selector_ui( array( 'id' => 'adgear_type', 'name' => 'adgear[type]', 'selected' => 'categories', 'path_id' => 'adgear_path', 'path_name' => 'adgear[path]', 'path_selected' => '' ) ); ?>
               </td>
             </tr>
-            <tr valign="top">
+            <tr valign="top" class="adgear_advanced" style="display:none">
               <th scope="row"><label for="adgear_path_middle"><?php _e('Path middle:')?></label></th>
               <td>
                 <?php adgear_path_middle_ui( array( 'id' => 'adgear_path_middle', 'name' => 'adgear[path_middle]', 'value' => '' ) ); ?>
@@ -220,10 +220,17 @@ function adgear_meta_box_form() {
                 <?php adgear_slugify_selector_ui( array( 'id' => 'adgear_slugify', 'name' => 'adgear[slugify]', 'selected' => 'yes') ); ?>
               </td>
             </tr>
-            <tr valign="top">
+            <tr valign="top" class="adgear_advanced" style="display:none">
               <th scope="row"><label for="adgear_path_post"><?php _e('Path after:')?></label></th>
               <td>
                 <?php adgear_path_post_ui( array( 'id' => 'adgear_path_post', 'name' => 'adgear[path_post]', 'value' => '' ) ); ?>
+              </td>
+            </tr>
+            <tr valign="top">
+              <th scope="row"><label for="adgear_toggle_advanced"><?php _e('Show advanced path options'); ?></label></th>
+              <td>
+                <?php adgear_toggle_advanced_ui( array( 'selected' => false ) ); ?>
+                <?php adgear_example_ui( array( 'selected' => false ) ); ?>
               </td>
             </tr>
 <?php } /* dynamic site */ else /* static site */ { ?>

@@ -273,6 +273,24 @@ function adgear_path_type_selector_ui($args) {
 <?php
 }
 
+function adgear_toggle_advanced_ui($args) {
+  echo '<input type="checkbox" class="adgear_toggle_advanced"';
+  if ( true == $args[ 'selected' ] ) {
+    echo ' checked';
+  }
+  echo '/>';
+}
+
+function adgear_example_ui($args) {
+  if ( $args[ 'selected' ] ) {
+    $style = "";
+  } else {
+    $style = "display:none";
+  }
+
+  echo '<div style="'.$style.'" class="adgear_example">Write manual paths (before, middle, after and manual path) using no quotes and separate segments using commas, like this: <tt>advanced, tutorial</tt>.</div>';
+}
+
 function adgear_path_pre_ui($args) {
   extract($args);
 ?>
@@ -383,12 +401,18 @@ class AdGearAdWidget extends WP_Widget {
       } else {
         $path_pre = $path_middle = $path_post = "";
       }
+
+      if ( $path_pre == "" && $path_middle == "" && $path_post == "" ) {
+        $show_advanced = false;
+      } else {
+        $show_advanced = true;
+      }
 ?>
       <p>
       <label for="<?php echo $this->get_field_id('format_id'); ?>"><?php _e('Ad Format:'); ?></label>
         <?php adgear_format_selector_ui( array( 'id' => $this->get_field_id('format_id'), 'name' => $this->get_field_name('format_id'), 'selected' => $format_id, 'include_blank' => true )); ?>
       </p>
-      <p>
+      <p class="adgear_advanced" style="<?php if (!$show_advanced) { echo "display:none"; } ?>">
         <label for="<?php echo $this->get_field_id('path_pre'); ?>"><?php _e('Path before:'); ?></label>
         <?php adgear_path_pre_ui( array( 'id' => $this->get_field_id('path_pre'), 'name' => $this->get_field_name('path_pre'), 'value' => $path_pre ) ); ?>
       </p>
@@ -396,7 +420,7 @@ class AdGearAdWidget extends WP_Widget {
         <label for="<?php echo $this->get_field_id('path_type'); ?>"><?php _e('Path type:'); ?></label>
         <?php adgear_path_type_selector_ui( array( 'id' => $this->get_field_id('path_type'), 'name' => $this->get_field_name('path_type'), 'selected' => $path_type, 'path_id' => $this->get_field_id('path'), 'path_name' => $this->get_field_name('path'), 'path_selected' => $path )); ?>
       </p>
-      <p>
+      <p class="adgear_advanced" style="<?php if (!$show_advanced) { echo "display:none"; } ?>">
         <label for="<?php echo $this->get_field_id('path_middle'); ?>"><?php _e('Path middle:'); ?></label>
         <?php adgear_path_middle_ui( array( 'id' => $this->get_field_id('path_middle'), 'name' => $this->get_field_name('path_middle'), 'value' => $path_middle ) ); ?>
       </p>
@@ -404,9 +428,13 @@ class AdGearAdWidget extends WP_Widget {
         <label for="<?php echo $this->get_field_id('slugify'); ?>"><?php _e('Use post\'s slug in path:'); ?></label>
         <?php adgear_slugify_selector_ui( array( 'id' => $this->get_field_id('slugify'), 'name' => $this->get_field_name('slugify'), 'selected' => $slugify )); ?>
       </p>
-      <p>
+      <p class="adgear_advanced" style="<?php if (!$show_advanced) { echo "display:none"; } ?>">
         <label for="<?php echo $this->get_field_id('path_post'); ?>"><?php _e('Path after:'); ?></label>
         <?php adgear_path_post_ui( array( 'id' => $this->get_field_id('path_post'), 'name' => $this->get_field_name('path_post'), 'value' => $path_post ) ); ?>
+      </p>
+      <p>
+        <label><?php _e('Show advanced path options'); ?> <?php adgear_toggle_advanced_ui( array( 'selected' => $show_advanced ) ); ?></label>
+        <?php adgear_example_ui( array( 'selected' => $show_advanced ) ); ?>
       </p>
 <?php
     } else {
