@@ -66,14 +66,14 @@ function adgearDynamicSiteChange($, root) {
 
     if (sendCode) sendCode.css({opacity: 0.5}).get()[0].disabled = true;
   } else {
-    var tagCode = {format  : format_id,
-                   name    : formatName,
-                   single  : single,
-                   slugify : slugify,
-                   path    : pathParam,
-                   pre     : pathPre,
-                   middle  : pathMiddle,
-                   post    : pathPost};
+    var tagCode = {format      : format_id,
+                   name        : formatName,
+                   single      : single,
+                   slugify     : slugify,
+                   path        : pathParam,
+                   path_pre    : pathPre,
+                   path_middle : pathMiddle,
+                   path_post   : pathPost};
 
     value = "[adgear_ad";
     for(var key in tagCode) {
