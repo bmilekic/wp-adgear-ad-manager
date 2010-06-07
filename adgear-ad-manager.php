@@ -325,60 +325,20 @@ class AdGearAdWidget extends WP_Widget {
   function widget($args, $instance) {
     extract($args, EXTR_SKIP);
 
-    // If this tag should render only on single posts page, and we're not on a single post, abort
-    if ($instance['single'] == 'yes' && !is_single()) return "";
-
-    // If this tag should render only on listing pages, and we're on a single post, abort
-    if ($instance['single'] == 'no'  &&  is_single()) return "";
-
     echo $before_widget;
-
-    $pathname = array();
-
     if ( adgear_is_dynamic_site() ) {
-      switch( $instance['path_type'] ) {
-      case 'categories':
-        global $post;
-        $postcats = get_the_category( $post->ID );
-        if ( $postcats ) {
-          foreach( $postcats as $cat ) {
-            $pathname[] = $cat->cat_name;
-          }
-        }
-        sort( $pathname );
-        break;
-
-      case 'tags':
-        global $post;
-        $posttags = get_the_tags( $post->ID );
-        if ( $posttags ) {
-          foreach( $posttags as $tag ) {
-            $pathname[] = $tag->name;
-          }
-        }
-        sort( $pathname );
-        break;
-
-      case 'path':
-        $pathname = explode( ',', $instance['path'] );
-        break;
-
-      default:
-        echo "<p style='".adgear_warning_css_properties()."'><strong>WARNING</strong>: Bad path_type specified: cannot serve (internal error). Submit a bug report to support@adgear.com.</p>";
-        echo $after_widget;
-        return;
-      }
-
-      if ( $instance['slugify'] == "yes" ) {
-        global $post;
-        $pathname[] = $post->post_name;
-      }
-
-      echo adgear_ad_internal( $instance['format_id'], $pathname );
+      echo adgear_ad( array(
+        "format"      => $instance[ 'format_id' ],
+        "path"        => $instance[ 'path_type' ],
+        "path_pre"    => $instance[ 'path_pre' ],
+        "path_middle" => $instance[ 'path_middle' ],
+        "path_post"   => $instance[ 'path_post' ],
+        "slugify"     => $instance[ 'slugify' ],
+        "single"      => $instance[ 'single' ] ) );
     } else {
-      echo adgear_ad_internal( $instance['adspot_id'] );
+      echo adgear_ad( array(
+        "id"          => $instance[ 'id' ] ) );
     }
-
     echo $after_widget;
   }
 
