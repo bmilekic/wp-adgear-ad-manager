@@ -155,7 +155,7 @@ function adgear_ad($atts) {
     break;
 
   case 'no':
-    if (!is_single()) return "";
+    if (is_single()) return "";
     break;
 
   case 'front':
