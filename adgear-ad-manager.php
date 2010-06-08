@@ -355,7 +355,8 @@ class AdGearAdWidget extends WP_Widget {
         "single"      => $instance[ 'single' ] ) );
     } else {
       echo adgear_ad( array(
-        "id"          => $instance[ 'id' ] ) );
+        "id"          => $instance[ 'id' ],
+        "single"      => $instance[ 'single' ] ) );
     }
     echo $after_widget;
   }
