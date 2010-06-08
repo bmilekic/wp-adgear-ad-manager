@@ -149,6 +149,31 @@ function adgear_ad($atts) {
     "path_post"   => "",
   ), $atts));
 
+  switch($single) {
+  case 'yes':
+    if (!is_single()) return "";
+    break;
+
+  case 'no':
+    if (!is_single()) return "";
+    break;
+
+  case 'front':
+    if (!is_front_page()) return "";
+    break;
+
+  case 'home':
+    if (!is_home()) return "";
+    break;
+
+  case 'all':
+    /* NOP: we always succeed */
+    break;
+
+  case else:
+    return "<p style='".adgear_warning_css_properties()."'><strong>WARNING</strong>: AdGear Ad Manager did not understand the &quot;single&quot; option. This parameter accepts one of five values: yes, no, all, home or front; not <strong>$single</strong>.</p>";
+  }
+
   // If this tag should render only on single posts page, and we're not on a single post, abort
   if ($single == 'yes' && !is_single()) return "";
 
@@ -243,9 +268,11 @@ function adgear_single_selector_ui($args) {
   extract($args);
 ?>
   <select class="adgear_single_selector" id="<?php echo $id; ?>" name="<?php echo $name; ?>">
-    <option <?php if ( $selected == 'all' ) { echo "selected"; } ?> value="all">On all pages</option>
-    <option <?php if ( $selected == 'yes' ) { echo "selected"; } ?> value="yes">On single post pages only</option>
-    <option <?php if ( $selected == 'no'  ) { echo "selected"; } ?> value="no">On list pages only</option>
+    <option <?php if ( $selected == 'all'   ) { echo "selected"; } ?> value="all">On all pages</option>
+    <option <?php if ( $selected == 'front' ) { echo "selected"; } ?> value="front">On the front page</option>
+    <option <?php if ( $selected == 'home'  ) { echo "selected"; } ?> value="home">On the home page</option>
+    <option <?php if ( $selected == 'yes'   ) { echo "selected"; } ?> value="yes">On pages with a single post</option>
+    <option <?php if ( $selected == 'no'    ) { echo "selected"; } ?> value="no">On archive pages</option>
   </select>
 <?php
 }
