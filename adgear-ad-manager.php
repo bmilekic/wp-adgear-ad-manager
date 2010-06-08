@@ -78,7 +78,7 @@ function adgear_ad_internal() {
     $embed_code = str_replace( "__CHIP_KEY__", get_option( 'adgear_site_chip_key' ), $embed_code );
     $embed_code = str_replace( "__FORMAT_ID__", $format, $embed_code );
     if ( $path ) {
-      $embed_code = preg_replace( '/"path"\s*:\s*\[.*\]/', '"path":'.json_encode( $path ), $embed_code );
+      $embed_code = preg_replace( '/"path"\s*:\s*\[.*\]/', '"path":'.json_encode( array_values( $path ) ), $embed_code );
     } else {
       // We might be called with only a single arg, and func_get_arg() returns FALSE in that case
       $embed_code = preg_replace( '/"path"\s*:\s*\[.*\]/', '"path":'.json_encode( array() ), $embed_code );
@@ -231,8 +231,6 @@ function adgear_ad($atts) {
       break;
     }
 
-    $pathname = array_merge( $pathname, explode( ',', $path_middle ) );
-
     if ( $slugify == "1" || $slugify == "yes" ) {
       $post = get_post( get_the_ID() );
       $pathname[] = $post->post_name;
@@ -240,7 +238,8 @@ function adgear_ad($atts) {
 
     $pathname = array_merge( $pathname, explode( ',', $path_post ) );
 
-    return adgear_ad_internal( $format, $pathname);
+    // Remove empty strings from the Array
+    return adgear_ad_internal( $format, array_filter( $pathname ) );
   } else if ( adgear_is_dynamic_site() && $format ) {
     return adgear_ad_internal( $format, array() );
   } else {
@@ -370,22 +369,35 @@ class AdGearAdWidget extends WP_Widget {
   function widget($args, $instance) {
     extract($args, EXTR_SKIP);
 
-    echo $before_widget;
     if ( adgear_is_dynamic_site() ) {
-      echo adgear_ad( array(
+      switch( $instance['path_type'] ) {
+      case "categories":
+      case "tags":
+        $path_value = "by_".$instance[ 'path_type' ];
+        break;
+      default:
+        $path_value = $instance[ 'path' ];
+      }
+
+      $embed_code = adgear_ad( array(
         "format"      => $instance[ 'format_id' ],
-        "path"        => $instance[ 'path_type' ],
+        "path"        => $path_value,
         "path_pre"    => $instance[ 'path_pre' ],
         "path_middle" => $instance[ 'path_middle' ],
         "path_post"   => $instance[ 'path_post' ],
         "slugify"     => $instance[ 'slugify' ],
         "single"      => $instance[ 'single' ] ) );
     } else {
-      echo adgear_ad( array(
+      $embed_code = adgear_ad( array(
         "id"          => $instance[ 'id' ],
         "single"      => $instance[ 'single' ] ) );
     }
-    echo $after_widget;
+
+    if ( $embed_code <> "" ) {
+      echo $before_widget;
+      echo $embed_code;
+      echo $after_widget;
+    }
   }
 
   function update($new_instance, $old_instance) {
