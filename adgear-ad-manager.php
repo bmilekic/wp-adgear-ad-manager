@@ -170,7 +170,7 @@ function adgear_ad($atts) {
     /* NOP: we always succeed */
     break;
 
-  case else:
+  default:
     return "<p style='".adgear_warning_css_properties()."'><strong>WARNING</strong>: AdGear Ad Manager did not understand the &quot;single&quot; option. This parameter accepts one of five values: yes, no, all, home or front; not <strong>$single</strong>.</p>";
   }
 
