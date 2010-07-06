@@ -74,8 +74,10 @@ function adgear_update_site_embed_code($old_value, $new_value) {
             $rows = array();
 
             foreach($ad_spots["ad_spots"] as $ad_spot) {
-              $rows[] = implode( ",", array( $ad_spot['name'], $ad_spot['id'], $ad_spot['format_id'] ) );
-              update_option( 'adgear_adspot_embed_code_'.$ad_spot['id'], $ad_spot['embed_code'] );
+              if ( $ad_spot["state"] == "active" ) {
+                $rows[] = implode( ",", array( $ad_spot['name'], $ad_spot['id'], $ad_spot['format_id'] ) );
+                update_option( 'adgear_adspot_embed_code_'.$ad_spot['id'], $ad_spot['embed_code'] );
+              }
             }
 
             natcasesort( $rows );
