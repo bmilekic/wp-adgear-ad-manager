@@ -389,7 +389,7 @@ class AdGearAdWidget extends WP_Widget {
         "single"      => $instance[ 'single' ] ) );
     } else {
       $embed_code = adgear_ad( array(
-        "id"          => $instance[ 'id' ],
+        "id"          => $instance[ 'adspot_id' ],
         "single"      => $instance[ 'single' ] ) );
     }
 
