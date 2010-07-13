@@ -3,6 +3,7 @@ Tags: ad, ads
 Requires at least: 2.9.2
 Tested up to: 3.0.0
 Stable tag: trunk
+Contributors: François Beausoleil <francois@bloomdigital.com>
 
 Serve ads from your AdGear account automatically.
 
@@ -15,17 +16,17 @@ AdGear Ad Manager allows you to serve your ads without leaving your WordPress in
 1. Ensure you use PHP5, for the json_decode() function and the CURL module
 2. Login to your AdGear account, click on your username to edit your settings, enable API access, and copy your API key
 3. Create a website for your WordPress blog
-4. Upload the ZIP file through WordPress' Plugins UI
+4. Upload the plugin's ZIP file through WordPress' Plugins UI
 5. Activate the plugin
 6. Go to Settings, AdGear Settings, then set your username, paste your API key, and set the root API endpoint (should be http://api.admin.adgear.com/, which is filled in by default)
 7. Save the settings, then choose your site from the dropdown
 8. You're done!
 
-=== Adding an Ad in the sidebar ===
+== Adding an Ad in the sidebar ==
 
 Use the AdGear Widget to put an ad. Click on Appearance, Widgets.
 
-=== Using the Shortcode tag ===
+== Using the Shortcode tag ==
 
 Anywhere in the body of your post, you may use the AdGear Shortcode:
 
@@ -40,7 +41,7 @@ Sometimes you want to show one set of AdSpots on single post pages vs list pages
 
 The List Sidebar AdSpot would be generated only on list pages: archives, front page, etc. The Sidebar for Article AdSpot would be generated if the visitor is viewing a single post's page.
 
-=== Using the Shortcode tag with Dynamic AdSpots ===
+== Using the Shortcode tag with Dynamic AdSpots ==
 
 Dynamic AdSpots are used when you want AdGear to learn about your site's hierarchy automatically. Please refer to [Creating a Website With Dynamically Managed Ad Spots](http://adgear.com/support/quick-start/configuring-a-complex-website#Creating_a_Website_With_Dynamically_Managed_Ad_Spots) on the AdGear support site for details.
 
@@ -61,7 +62,7 @@ All options for the Shortcode API are:
     path_after="comma,separated,string" (default: "")
     single=[yes | no | all] (default: all)
 
-=== Low-level access for use in themes ===
+== Low-level access for use in themes ==
 
 You can call the `adgear_ad()` PHP function to generate the correct embed tag at a specific point in your layout. `adgear_ad()` can be called in one of 2 modes:
 
@@ -75,3 +76,17 @@ You can call the `adgear_ad()` PHP function to generate the correct embed tag at
 = How do I guess the format IDs? =
 
 Use the META box at the bottom of the post form to build a Shortcode for you.
+
+== Contributors ==
+
+* François Beausoleil <francois@bloomdigital.com>
+
+== Upgrade Notice ==
+
+The internal functions between 1.0 and 1.1 changed. The old adgear_ad() function was renamed to adgear_ad_internal(), and a new adgear_ad() function took it's place.
+
+== Changelog ==
+
+* v1.1.1 - Minor bug fixes
+* v1.1.0 - Rewrote the internal API to expose a function for template consumers
+* v1.0.0 - Initial release
