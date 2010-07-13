@@ -1,7 +1,7 @@
 === AdGear Ad Manager ===
 Tags: ad, ads
 Requires at least: 2.9.2
-Tested up to: 2.9.2
+Tested up to: 3.0.0
 Stable tag: trunk
 
 Serve ads from your AdGear account automatically.
