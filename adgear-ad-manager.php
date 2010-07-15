@@ -96,6 +96,31 @@ function adgear_is_dynamic_site() {
   return get_option( 'adgear_site_is_dynamic', FALSE );
 }
 
+/* Sorts based on format name */
+function adgear_cmp($a, $b) {
+  $an = $a["name"];
+  preg_match( "/^(\\d)+x/", $an, $awidth );
+  $acount = count( $awidth );
+
+  $bn = $b["name"];
+  preg_match( "/^(\\d)+x/", $bn, $bwidth );
+  $bcount = count( $bwidth );
+
+  if ( $acount == 0 && $bcount == 0 ) {
+    /* 2 names -- sort alphabetically */
+    return strcmp( $an, $bn );
+  } else if ( $acount > 0 && $bcount > 0 ) {
+    /* 2 formats with width/height - sort in ascending width */
+    return strcmp( $awidth[0], $bwidth[0] );
+  } else if ( $acount > 0 ) {
+    /* a format with width/height with a name: name goes first */
+    return 1;
+  } else {
+    /* a name and a format with width/height with a name: name goes first */
+    return -1;
+  }
+}
+
 function adgear_formats() {
   $csv = get_option("adgear_formats_csv");
   if ( $csv == "" ) return array();
@@ -108,7 +133,23 @@ function adgear_formats() {
     }
   }
 
-  return $formats;
+  $temp = array();
+  $output = array();
+  foreach( $formats as $format ) {
+    if ( $format["width"] == "" ) {
+      $output[] = $format;
+    } else {
+      $temp[] = $format;
+    }
+  }
+
+  usort( $temp, "adgear_cmp" );
+
+  foreach( $temp as $format ) {
+    $output[] = $format;
+  }
+
+  return $output;
 }
 
 function adgear_ad_spots() {
