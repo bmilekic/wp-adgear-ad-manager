@@ -37,6 +37,17 @@ function adgear_update_formats_csv($old_value, $new_value) {
   $formats = adgear_get_service_data( 'list_formats' );
   $rows = array();
   foreach( $formats["formats"] as $format ) {
+    /* Only keep formats which are good for Standard ads. That filters out Mobile App ad formats. */
+    $accepted = FALSE;
+    foreach( $format["accepted_families"] as $family ) {
+      if ( $family["name"] == "Standard" ) {
+        $accepted = TRUE;
+        break;
+      }
+    }
+
+    if ( ! $accepted ) continue;
+
     $id       = $format["id"];
     $name     = $format["name"];
     $width    = $format["width"];
